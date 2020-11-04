@@ -33,3 +33,20 @@ const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
+
+// todo
+/*
+Authorization: email & password
+Assign random hero to this new user
+Endpoints:
+/films
+/species
+/vehicles
+/starships
+/planets
+
+Authorization used in:
+/resource/{id}
+
+Caching: 24hrs
+*/
