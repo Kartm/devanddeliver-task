@@ -2,6 +2,7 @@ version: '2'
 services:
   security:
     build: ./sample-service
+    # network_mode: "host"
     ports:
      - "8123:8123"
     depends_on:
@@ -12,3 +13,5 @@ services:
      - ./sample-service/api:/app/api
   db:
     build: ./database-service
+    cap_add:
+      - SYS_NICE  # CAP_SYS_NICE
