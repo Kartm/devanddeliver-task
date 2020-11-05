@@ -2,10 +2,9 @@
   "name": "erp_chirinos",
   "version": "0.0.0",
   "description": "Sistema ERP, proyecto de chirinos",
-  "main": "server.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -19,17 +18,11 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.15.2",
-    "cors": "^2.8.5",
     "express": "^4.14.0",
     "jade": "^1.11.0",
     "jquery": "^3.1.1",
     "mysql": "^2.12.0",
-    "mysql2": "^2.2.5",
     "path": "^0.12.7",
-    "sequelize": "^6.3.5",
     "serve-favicon": "^2.3.2"
-  },
-  "devDependencies": {
-    "nodemon": "^1.11.0"
   }
 }
