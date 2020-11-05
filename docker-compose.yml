@@ -1,14 +1,26 @@
 version: '2'
 services:
-  security:
-    build: ./sample-service
-    ports:
-     - "8123:8123"
-    depends_on:
-     - db
-    environment:
-     - DATABASE_HOST=db
-    volumes:
-     - ./sample-service/api:/app/api
   db:
-    build: ./database-service
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: CHIRINOS
+      MYSQL_PASSWORD: 123
+      MYSQL_ROOT_PASSWORD: 123
+  api:
+    build: ./api
+    command: nodemon --legacy-watch app.js
+    volumes:
+     - ./api:/app/api
+    ports:
+      - "8123:8123"
+    # expose:
+    #   - 8123
+    environment:
+      - DATABASE_HOST=db
+    depends_on:
+    - db
+
+volumes:
+  db_data: {}
