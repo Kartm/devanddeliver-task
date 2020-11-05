@@ -6,7 +6,6 @@ services:
       - db_data:/var/lib/mysql
     environment:
       MYSQL_DATABASE: CHIRINOS
-      MYSQL_USER: root
       MYSQL_PASSWORD: 123
       MYSQL_ROOT_PASSWORD: 123
   api:
