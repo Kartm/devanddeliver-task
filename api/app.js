@@ -1,21 +1,31 @@
-/**
- * Created by Carlos Leonardo Camilo Vargas HUuamán on 12/9/16.
- */
-var express = require("express");
-var bodyParser = require("body-parser");
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+// const appendCurrentUser = require("./middleware/appendCurrentUser.js");
 
-var index = require("./routes/index");
-var employee = require("./routes/employee");
-var placelocation = require("./routes/placelocation");
+const app = express();
 
-var app = express();
+var corsOptions = {
+  origin: "http://localhost:8081",
+};
 
-app.set("view engine", "jade");
-
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use("/employee", employee);
-app.use("/", index);
-app.use("/placelocation", placelocation);
 
-app.listen(8123);
+// append current user to req
+// app.use(appendCurrentUser);
+
+const db = require("./models");
+db.sequelize.sync();
+
+app.get("/", (req, res) => {
+  res.json({ message: "Welcome to bogo node application." });
+});
+
+require("./routes/user.routes.js")(app);
+
+const PORT = process.env.PORT || 8123;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}.`);
+});
