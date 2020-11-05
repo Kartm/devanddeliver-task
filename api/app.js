@@ -1,7 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-// const appendCurrentUser = require("./middleware/appendCurrentUser.js");
 
 const app = express();
 
@@ -12,9 +11,6 @@ var corsOptions = {
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-// append current user to req
-// app.use(appendCurrentUser);
 
 const db = require("./models");
 db.sequelize.sync();

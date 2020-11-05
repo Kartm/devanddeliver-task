@@ -1,14 +1,32 @@
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+let fetch = require("node-fetch");
 const db = require("../models");
-const Users = db.users;
+const User = db.users;
 const Op = db.Sequelize.Op;
 
-function generateAccessToken(data) {
-  // expires after half and hour (1800 seconds = 30 minutes)
-  return jwt.sign(data, "SECRET", { expiresIn: "1800s" });
+function randomInteger(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-exports.register = (req, res) => {
+function randomSwPeopleId() {
+  return new Promise((resolve) => {
+    fetch("https://swapi.dev/api/people/", {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    })
+      .then(async (response) => {
+        response.json().then((j) => {
+          resolve(randomInteger(1, j.count));
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
+}
+
+exports.register = async (req, res) => {
   if (!req.body.email || !req.body.password) {
     res.status(400).send({
       message: "Content can not be empty.",
@@ -16,14 +34,18 @@ exports.register = (req, res) => {
     return;
   }
 
-  const token = generateAccessToken({ password: req.body.password });
+  const passwordHash = crypto
+    .createHash("sha256")
+    .update(req.body.password)
+    .digest("hex");
 
   const user = {
     email: req.body.email,
-    token: token,
+    passwordHash,
+    swPeopleId: await randomSwPeopleId(),
   };
 
-  Users.create(user)
+  User.create(user)
     .then((data) => {
       res.send(data);
     })
@@ -35,13 +57,69 @@ exports.register = (req, res) => {
     });
 };
 
-exports.findAll = (req, res) => {
-  const title = req.query.title;
-  var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
+exports.login = (req, res) => {
+  User.findOne({
+    where: {
+      email: req.body.email,
+    },
+  })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({ message: "User Not found." });
+      }
 
-  Users.findAll({ where: condition })
-    .then((data) => {
-      res.send(data);
+      const passwordHash = crypto
+        .createHash("sha256")
+        .update(req.body.password)
+        .digest("hex");
+
+      var passwordIsValid = user.passwordHash === passwordHash;
+
+      if (!passwordIsValid) {
+        return res.status(401).send({
+          accessToken: null,
+          message: "Invalid Password!",
+        });
+      }
+
+      var token = jwt.sign({ userId: user.id }, "SECRET", {
+        expiresIn: 86400, // 24 hours
+      });
+
+      res.status(200).send({
+        id: user.id,
+        email: user.email,
+        swPeopleId: user.swPeopleId,
+        accessToken: token,
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
+};
+
+exports.find = (req, res) => {
+  // var condition = req.userId ? { id: { [Op.like]: `%${req.userId}%` } } : null;
+  // todo check if not undefined
+
+  User.findByPk(req.userId)
+    .then((user) => {
+      fetch(`https://swapi.dev/api/people/${user.swPeopleId}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      })
+        .then(async (response) => {
+          response.json().then((j) => {
+            res.status(200).send({
+              id: user.id,
+              email: user.email,
+              people: j,
+            });
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     })
     .catch((err) => {
       res.status(500).send({
@@ -54,7 +132,7 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
-  Users.findByPk(id)
+  User.findByPk(id)
     .then((data) => {
       res.send(data);
     })

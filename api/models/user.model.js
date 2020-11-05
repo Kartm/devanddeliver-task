@@ -3,8 +3,11 @@ module.exports = (sequelize, Sequelize) => {
     email: {
       type: Sequelize.STRING,
     },
-    token: {
+    passwordHash: {
       type: Sequelize.STRING,
+    },
+    swPeopleId: {
+      type: Sequelize.INTEGER,
     },
   });
 
