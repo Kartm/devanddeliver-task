@@ -1,13 +1,13 @@
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-let fetch = require("node-fetch");
+const fetch = require("node-fetch");
+
+const CacheService = require("../services/cache.service");
+const randomInteger = require("../utils/randomInteger");
 const db = require("../models");
 const User = db.users;
-const Op = db.Sequelize.Op;
 
-function randomInteger(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+const cache = new CacheService(60 * 60 * 24); // cache for 24 hours
 
 function randomSwPeopleId() {
   return new Promise((resolve) => {
@@ -104,21 +104,23 @@ exports.find = (req, res) => {
 
   User.findByPk(req.userId)
     .then((user) => {
-      fetch(`https://swapi.dev/api/people/${user.swPeopleId}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      })
-        .then(async (response) => {
-          response.json().then((j) => {
-            res.status(200).send({
-              id: user.id,
-              email: user.email,
-              people: j,
-            });
+      const cacheKey = `people_${user.swPeopleId}`;
+
+      return cache
+        .get(cacheKey, () =>
+          fetch(`https://swapi.dev/api/people/${user.swPeopleId}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+          }).then(async (response) => {
+            return await response.json();
+          })
+        )
+        .then((j) => {
+          res.status(200).send({
+            id: user.id,
+            email: user.email,
+            people: j,
           });
-        })
-        .catch((err) => {
-          console.log(err);
         });
     })
     .catch((err) => {
