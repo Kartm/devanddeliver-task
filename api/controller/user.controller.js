@@ -47,7 +47,11 @@ exports.register = async (req, res) => {
 
   User.create(user)
     .then((data) => {
-      res.send(data);
+      res.send({
+        id: data.id,
+        email: data.email,
+        swPeopleId: data.swPeopleId,
+      });
     })
     .catch((err) => {
       res.status(500).send({
@@ -119,7 +123,7 @@ exports.find = (req, res) => {
           res.status(200).send({
             id: user.id,
             email: user.email,
-            people: j,
+            person: j,
           });
         });
     })
