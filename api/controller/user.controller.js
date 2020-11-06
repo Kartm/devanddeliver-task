@@ -2,8 +2,8 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const fetch = require("node-fetch");
 
-const CacheService = require("../services/cache.service");
 const randomInteger = require("../utils/randomInteger");
+const idFromURI = require("../utils/idFromURI");
 const db = require("../models");
 const User = db.users;
 
