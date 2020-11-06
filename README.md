@@ -1,3 +1,4 @@
+
 - [Testing the API](#testing-the-api)
 - [Available endpoints](#available-endpoints)
   - [Register](#register)

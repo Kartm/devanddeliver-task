@@ -3,6 +3,7 @@ FROM node:10-slim
 WORKDIR /app
 
 RUN npm install -g nodemon
+RUN npm install -g ts-node
 
 COPY package*.json ./
 
@@ -16,4 +17,4 @@ ENV PORT 8123
 
 EXPOSE 8123
 
-CMD ["node", "app.js"]
+CMD ["node", "app.ts"]

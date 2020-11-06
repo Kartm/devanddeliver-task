@@ -1,8 +1,9 @@
-const CacheService = require("../services/cache.service");
-const cache = new CacheService(60 * 60 * 24); // cache for 24 hours
-const fetch = require("node-fetch");
+import fetch from "node-fetch";
+import CacheService from "../services/cache.service";
 
-exports.getAllSwPeople = () =>
+const cache = new CacheService(60 * 60 * 24); // cache for 24 hours
+
+export const getAllSwPeople = () =>
   new Promise((res) => {
     const cacheKey = `people_all`;
 
@@ -20,7 +21,7 @@ exports.getAllSwPeople = () =>
       });
   });
 
-exports.getSwHero = (id) =>
+export const getSwHero = (id) =>
   new Promise((res) => {
     const cacheKey = `people_${id}`;
 
@@ -38,7 +39,7 @@ exports.getSwHero = (id) =>
       });
   });
 
-exports.getSwFilm = (id) =>
+export const getSwFilm = (id) =>
   new Promise((res) => {
     const cacheKey = `film_${id}`;
 
@@ -56,7 +57,7 @@ exports.getSwFilm = (id) =>
       });
   });
 
-exports.getSwSpecies = (id) =>
+export const getSwSpecies = (id) =>
   new Promise((res) => {
     const cacheKey = `species_${id}`;
 
@@ -74,7 +75,7 @@ exports.getSwSpecies = (id) =>
       });
   });
 
-exports.getSwVehicle = (id) =>
+export const getSwVehicle = (id) =>
   new Promise((res) => {
     const cacheKey = `vehicle_${id}`;
 
@@ -92,7 +93,7 @@ exports.getSwVehicle = (id) =>
       });
   });
 
-exports.getSwStarship = (id) =>
+export const getSwStarship = (id) =>
   new Promise((res) => {
     const cacheKey = `starship_${id}`;
 
@@ -110,7 +111,7 @@ exports.getSwStarship = (id) =>
       });
   });
 
-exports.getSwPlanet = (id) =>
+export const getSwPlanet = (id) =>
   new Promise((res) => {
     const cacheKey = `planet_${id}`;
 

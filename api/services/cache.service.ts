@@ -1,6 +1,6 @@
-const NodeCache = require("node-cache");
+import NodeCache from "node-cache";
 
-class Cache {
+export default class CacheService {
   constructor(ttlSeconds) {
     this.cache = new NodeCache({
       stdTTL: ttlSeconds,
@@ -8,6 +8,8 @@ class Cache {
       useClones: false,
     });
   }
+
+  cache = null;
 
   get(key, storeFunction) {
     const value = this.cache.get(key);
@@ -42,5 +44,3 @@ class Cache {
     this.cache.flushAll();
   }
 }
-
-module.exports = Cache;

@@ -1,21 +1,13 @@
 {
-  "name": "erp_chirinos",
-  "version": "0.0.0",
-  "description": "Sistema ERP, proyecto de chirinos",
-  "main": "app.js",
+  "name": "devanddeliver-task",
+  "version": "1.0.0",
+  "description": "A simple NodeJS API.",
   "scripts": {
-    "start": "node app.js",
+    "start": "node app.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "erp",
-    "chirinos",
-    "proyecto",
-    "javascript",
-    "mysql"
-  ],
-  "author": "Carlos Leonardo Camilo Vargas Huamán",
-  "license": "ISC",
+  "author": "Łukasz Blachnicki",
+  "license": "MIT",
   "dependencies": {
     "body-parser": "^1.15.2",
     "cors": "^2.8.5",
@@ -31,5 +23,25 @@
     "path": "^0.12.7",
     "sequelize": "^6.3.5",
     "serve-favicon": "^2.3.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.8",
+    "@types/node": "^14.14.6",
+    "eslint": "^7.12.1",
+    "eslint-plugin-import": "^2.22.1",
+    "nodemon": "^2.0.6",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.5"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "**/*.test.ts",
+      "**/*.spec.ts",
+      ".git",
+      "node_modules"
+    ],
+    "execMap": {
+      "ts": "ts-node"
+    }
   }
 }

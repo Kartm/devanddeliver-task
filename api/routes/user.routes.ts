@@ -1,9 +1,9 @@
-const authenticateToken = require("../middleware/authenticateToken.js");
+import authenticateToken from "../middleware/authenticateToken";
+import * as users from "../controller/user.controller";
+import express from "express";
 
-module.exports = (app) => {
-  const users = require("../controller/user.controller.js");
-
-  var router = require("express").Router();
+export default (app) => {
+  var router = express.Router();
 
   router.post("/register", users.register);
 
