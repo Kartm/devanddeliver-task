@@ -18,7 +18,7 @@
 
 1. Start the Docker daemon: `sudo dockerd`
 2. Compose the Docker: `sudo docker-compose up`
-3. The API is exposed at `127.0.0.1:8123/`
+3. The API is exposed at `127.0.0.1:8123`
 
 ## Available endpoints
 
