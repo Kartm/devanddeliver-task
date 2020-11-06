@@ -5,7 +5,7 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     environment:
-      MYSQL_DATABASE: CHIRINOS
+      MYSQL_DATABASE: SW_DB
       MYSQL_PASSWORD: 123
       MYSQL_ROOT_PASSWORD: 123
   api:

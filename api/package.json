@@ -1,21 +1,14 @@
 {
-  "name": "erp_chirinos",
-  "version": "0.0.0",
-  "description": "Sistema ERP, proyecto de chirinos",
+  "name": "devanddeliver-task",
+  "version": "1.0.0",
+  "description": "A simple NodeJS API.",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "erp",
-    "chirinos",
-    "proyecto",
-    "javascript",
-    "mysql"
-  ],
-  "author": "Carlos Leonardo Camilo Vargas Huamán",
-  "license": "ISC",
+  "author": "Łukasz Blachnicki",
+  "license": "MIT",
   "dependencies": {
     "body-parser": "^1.15.2",
     "cors": "^2.8.5",

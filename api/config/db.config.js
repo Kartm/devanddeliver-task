@@ -2,7 +2,7 @@ module.exports = {
   host: process.env.DATABASE_HOST || "127.0.0.1",
   user: "root",
   password: "123",
-  database: "CHIRINOS",
+  database: "SW_DB",
   port: 3306,
   dialect: "mysql",
   pool: {
