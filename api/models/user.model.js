@@ -6,7 +6,7 @@ module.exports = (sequelize, Sequelize) => {
     passwordHash: {
       type: Sequelize.STRING,
     },
-    swPeopleId: {
+    swHeroId: {
       type: Sequelize.INTEGER,
     },
   });

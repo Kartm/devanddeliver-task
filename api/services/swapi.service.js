@@ -20,7 +20,7 @@ exports.getAllSwPeople = () =>
       });
   });
 
-exports.getSwPerson = (id) =>
+exports.getSwHero = (id) =>
   new Promise((res) => {
     const cacheKey = `people_${id}`;
 

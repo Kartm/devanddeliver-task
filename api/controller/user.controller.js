@@ -6,9 +6,10 @@ const idFromURIArray = require("../utils/idFromURIArray");
 const db = require("../models");
 const {
   getAllSwPeople,
-  getSwPerson,
+  getSwHero,
   getSwFilm,
   getSwSpecies,
+  getSwVehicle,
   getSwStarship,
   getSwPlanet,
 } = require("../services/swapi.service");
@@ -28,12 +29,12 @@ exports.register = async (req, res) => {
     .digest("hex");
 
   const allSwPeople = await getAllSwPeople();
-  const swPeopleId = randomInteger(1, allSwPeople.count);
+  const swHeroId = randomInteger(1, allSwPeople.count);
 
   const user = {
     email: req.body.email,
     passwordHash,
-    swPeopleId,
+    swHeroId,
   };
 
   User.create(user)
@@ -41,7 +42,7 @@ exports.register = async (req, res) => {
       res.send({
         id: data.id,
         email: data.email,
-        swPeopleId: data.swPeopleId,
+        swHeroId: data.swHeroId,
       });
     })
     .catch((err) => {
@@ -83,7 +84,7 @@ exports.login = (req, res) => {
       res.status(200).send({
         id: user.id,
         email: user.email,
-        swPeopleId: user.swPeopleId,
+        swHeroId: user.swHeroId,
         accessToken: token,
       });
     })
@@ -95,11 +96,11 @@ exports.login = (req, res) => {
 exports.find = (req, res) => {
   User.findByPk(req.userId)
     .then((user) => {
-      getSwPerson(user.swPeopleId).then((data) => {
+      getSwHero(user.swHeroId).then((data) => {
         res.status(200).send({
           id: user.id,
           email: user.email,
-          person: data,
+          hero: data,
         });
       });
     })
@@ -114,7 +115,7 @@ exports.find = (req, res) => {
 exports.findFilms = (req, res) => {
   User.findByPk(req.userId)
     .then((user) => {
-      getSwPerson(user.swPeopleId).then((data) => {
+      getSwHero(user.swHeroId).then((data) => {
         const filmIds = idFromURIArray(data.films);
 
         Promise.all(filmIds.map((id) => getSwFilm(id))).then((values) => {
@@ -136,7 +137,7 @@ exports.findOneFilm = (req, res) => {
 
   User.findByPk(req.userId)
     .then((user) => {
-      getSwPerson(user.swPeopleId).then((data) => {
+      getSwHero(user.swHeroId).then((data) => {
         const filmIds = idFromURIArray(data.films);
 
         if (!filmIds.includes(id)) {
@@ -162,7 +163,7 @@ exports.findOneFilm = (req, res) => {
 exports.findSpecies = (req, res) => {
   User.findByPk(req.userId)
     .then((user) => {
-      getSwPerson(user.swPeopleId).then((data) => {
+      getSwHero(user.swHeroId).then((data) => {
         const speciesIds = idFromURIArray(data.species);
 
         Promise.all(speciesIds.map((id) => getSwSpecies(id))).then((values) => {
@@ -184,12 +185,12 @@ exports.findOneSpecies = (req, res) => {
 
   User.findByPk(req.userId)
     .then((user) => {
-      getSwPerson(user.swPeopleId).then((data) => {
+      getSwHero(user.swHeroId).then((data) => {
         const speciesIds = idFromURIArray(data.species);
 
         if (!speciesIds.includes(id)) {
           return res.status(403).send({
-            message: "No access to this film!",
+            message: "No access to this species!",
           });
         }
 
@@ -210,7 +211,7 @@ exports.findOneSpecies = (req, res) => {
 exports.findVehicles = (req, res) => {
   User.findByPk(req.userId)
     .then((user) => {
-      getSwPerson(user.swPeopleId).then((data) => {
+      getSwHero(user.swHeroId).then((data) => {
         const vehicleIds = idFromURIArray(data.vehicles);
 
         Promise.all(vehicleIds.map((id) => getSwVehicle(id))).then((values) => {
@@ -233,7 +234,7 @@ exports.findOneVehicle = (req, res) => {
 
   User.findByPk(req.userId)
     .then((user) => {
-      getSwPerson(user.swPeopleId).then((data) => {
+      getSwHero(user.swHeroId).then((data) => {
         const vehicleIds = idFromURIArray(data.vehicles);
 
         if (!vehicleIds.includes(id)) {
@@ -259,7 +260,7 @@ exports.findOneVehicle = (req, res) => {
 exports.findStarships = (req, res) => {
   User.findByPk(req.userId)
     .then((user) => {
-      getSwPerson(user.swPeopleId).then((data) => {
+      getSwHero(user.swHeroId).then((data) => {
         const starshipIds = idFromURIArray(data.starships);
 
         Promise.all(starshipIds.map((id) => getSwStarship(id))).then(
@@ -284,7 +285,7 @@ exports.findOneStarship = (req, res) => {
 
   User.findByPk(req.userId)
     .then((user) => {
-      getSwPerson(user.swPeopleId).then((data) => {
+      getSwHero(user.swHeroId).then((data) => {
         const starshipIds = idFromURIArray(data.starships);
 
         if (!starshipIds.includes(id)) {
@@ -311,7 +312,7 @@ exports.findOneStarship = (req, res) => {
 exports.findPlanet = (req, res) => {
   User.findByPk(req.userId)
     .then((user) => {
-      getSwPerson(user.swPeopleId).then((data) => {
+      getSwHero(user.swHeroId).then((data) => {
         const planetId = idFromURIArray([data.homeworld])[0];
 
         getSwPlanet(planetId).then((planet) => {
