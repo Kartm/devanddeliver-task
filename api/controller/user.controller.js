@@ -25,7 +25,8 @@ exports.register = async (req, res) => {
     .update(req.body.password)
     .digest("hex");
 
-  const swPeopleId = randomInteger(1, await getAllSwPeople().count);
+  const allSwPeople = await getAllSwPeople();
+  const swPeopleId = randomInteger(1, allSwPeople.count);
 
   const user = {
     email: req.body.email,
