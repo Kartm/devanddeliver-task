@@ -8,7 +8,7 @@ exports.getAllSwPeople = () =>
 
     return cache
       .get(cacheKey, () =>
-        fetch(`https://swapi.dev/api/people/}`, {
+        fetch(`https://swapi.dev/api/people/`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         }).then(async (response) => {

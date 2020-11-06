@@ -2,13 +2,15 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 
 const randomInteger = require("../utils/randomInteger");
-const idFromURI = require("../utils/idFromURI");
+const idFromURIArray = require("../utils/idFromURIArray");
 const db = require("../models");
 const {
   getAllSwPeople,
   getSwPerson,
   getSwFilm,
   getSwSpecies,
+  getSwStarship,
+  getSwPlanet,
 } = require("../services/swapi.service");
 const User = db.users;
 
@@ -113,7 +115,7 @@ exports.findFilms = (req, res) => {
   User.findByPk(req.userId)
     .then((user) => {
       getSwPerson(user.swPeopleId).then((data) => {
-        const filmIds = idFromURI(data.films);
+        const filmIds = idFromURIArray(data.films);
 
         Promise.all(filmIds.map((id) => getSwFilm(id))).then((values) => {
           res.status(200).send({
@@ -135,7 +137,7 @@ exports.findOneFilm = (req, res) => {
   User.findByPk(req.userId)
     .then((user) => {
       getSwPerson(user.swPeopleId).then((data) => {
-        const filmIds = idFromURI(data.films);
+        const filmIds = idFromURIArray(data.films);
 
         if (!filmIds.includes(id)) {
           return res.status(403).send({
@@ -152,7 +154,7 @@ exports.findOneFilm = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || "Some error occurred while retrieving films.",
+        message: err.message || "Some error occurred while retrieving film.",
       });
     });
 };
@@ -161,7 +163,7 @@ exports.findSpecies = (req, res) => {
   User.findByPk(req.userId)
     .then((user) => {
       getSwPerson(user.swPeopleId).then((data) => {
-        const speciesIds = idFromURI(data.species);
+        const speciesIds = idFromURIArray(data.species);
 
         Promise.all(speciesIds.map((id) => getSwSpecies(id))).then((values) => {
           res.status(200).send({
@@ -183,7 +185,7 @@ exports.findOneSpecies = (req, res) => {
   User.findByPk(req.userId)
     .then((user) => {
       getSwPerson(user.swPeopleId).then((data) => {
-        const speciesIds = idFromURI(data.species);
+        const speciesIds = idFromURIArray(data.species);
 
         if (!speciesIds.includes(id)) {
           return res.status(403).send({
@@ -191,9 +193,9 @@ exports.findOneSpecies = (req, res) => {
           });
         }
 
-        getSwSpecies(id).then((film) => {
+        getSwSpecies(id).then((species) => {
           res.status(200).send({
-            film,
+            species,
           });
         });
       });
@@ -201,6 +203,127 @@ exports.findOneSpecies = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message: err.message || "Some error occurred while retrieving species.",
+      });
+    });
+};
+
+exports.findVehicles = (req, res) => {
+  User.findByPk(req.userId)
+    .then((user) => {
+      getSwPerson(user.swPeopleId).then((data) => {
+        const vehicleIds = idFromURIArray(data.vehicles);
+
+        Promise.all(vehicleIds.map((id) => getSwVehicle(id))).then((values) => {
+          res.status(200).send({
+            vehicles: values,
+          });
+        });
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving vehicles.",
+      });
+    });
+};
+
+exports.findOneVehicle = (req, res) => {
+  const id = req.params.id;
+
+  User.findByPk(req.userId)
+    .then((user) => {
+      getSwPerson(user.swPeopleId).then((data) => {
+        const vehicleIds = idFromURIArray(data.vehicles);
+
+        if (!vehicleIds.includes(id)) {
+          return res.status(403).send({
+            message: "No access to this vehicle!",
+          });
+        }
+
+        getSwVehicle(id).then((vehicle) => {
+          res.status(200).send({
+            vehicle,
+          });
+        });
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving vehicle.",
+      });
+    });
+};
+
+exports.findStarships = (req, res) => {
+  User.findByPk(req.userId)
+    .then((user) => {
+      getSwPerson(user.swPeopleId).then((data) => {
+        const starshipIds = idFromURIArray(data.starships);
+
+        Promise.all(starshipIds.map((id) => getSwStarship(id))).then(
+          (values) => {
+            res.status(200).send({
+              starships: values,
+            });
+          }
+        );
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving starships.",
+      });
+    });
+};
+
+exports.findOneStarship = (req, res) => {
+  const id = req.params.id;
+
+  User.findByPk(req.userId)
+    .then((user) => {
+      getSwPerson(user.swPeopleId).then((data) => {
+        const starshipIds = idFromURIArray(data.starships);
+
+        if (!starshipIds.includes(id)) {
+          return res.status(403).send({
+            message: "No access to this starship!",
+          });
+        }
+
+        getSwStarship(id).then((starship) => {
+          res.status(200).send({
+            starship,
+          });
+        });
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving starship.",
+      });
+    });
+};
+
+exports.findPlanet = (req, res) => {
+  User.findByPk(req.userId)
+    .then((user) => {
+      getSwPerson(user.swPeopleId).then((data) => {
+        const planetId = idFromURIArray([data.homeworld])[0];
+
+        getSwPlanet(planetId).then((planet) => {
+          res.status(200).send({
+            planet,
+          });
+        });
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving planet.",
       });
     });
 };
