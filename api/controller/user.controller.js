@@ -1,35 +1,20 @@
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const fetch = require("node-fetch");
 
 const randomInteger = require("../utils/randomInteger");
 const idFromURI = require("../utils/idFromURI");
 const db = require("../models");
+const {
+  getAllSwPeople,
+  getSwPerson,
+  getSwFilm,
+} = require("../services/swapi.service");
 const User = db.users;
-
-const cache = new CacheService(60 * 60 * 24); // cache for 24 hours
-
-function randomSwPeopleId() {
-  return new Promise((resolve) => {
-    fetch("https://swapi.dev/api/people/", {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    })
-      .then(async (response) => {
-        response.json().then((j) => {
-          resolve(randomInteger(1, j.count));
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  });
-}
 
 exports.register = async (req, res) => {
   if (!req.body.email || !req.body.password) {
     res.status(400).send({
-      message: "Content can not be empty.",
+      message: "Email and password cannot be empty.",
     });
     return;
   }
@@ -39,10 +24,12 @@ exports.register = async (req, res) => {
     .update(req.body.password)
     .digest("hex");
 
+  const swPeopleId = randomInteger(1, await getAllSwPeople().count);
+
   const user = {
     email: req.body.email,
     passwordHash,
-    swPeopleId: await randomSwPeopleId(),
+    swPeopleId,
   };
 
   User.create(user)
@@ -55,8 +42,7 @@ exports.register = async (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating the Tutorial.",
+        message: err.message || "Some error occurred while creating the user.",
       });
     });
 };
@@ -69,7 +55,7 @@ exports.login = (req, res) => {
   })
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: "User Not found." });
+        return res.status(404).send({ message: "User not found." });
       }
 
       const passwordHash = crypto
@@ -82,7 +68,7 @@ exports.login = (req, res) => {
       if (!passwordIsValid) {
         return res.status(401).send({
           accessToken: null,
-          message: "Invalid Password!",
+          message: "Invalid password!",
         });
       }
 
@@ -103,48 +89,68 @@ exports.login = (req, res) => {
 };
 
 exports.find = (req, res) => {
-  // var condition = req.userId ? { id: { [Op.like]: `%${req.userId}%` } } : null;
-  // todo check if not undefined
-
   User.findByPk(req.userId)
     .then((user) => {
-      const cacheKey = `people_${user.swPeopleId}`;
-
-      return cache
-        .get(cacheKey, () =>
-          fetch(`https://swapi.dev/api/people/${user.swPeopleId}`, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-          }).then(async (response) => {
-            return await response.json();
-          })
-        )
-        .then((j) => {
-          res.status(200).send({
-            id: user.id,
-            email: user.email,
-            person: j,
-          });
+      getSwPerson(user.swPeopleId).then((data) => {
+        res.status(200).send({
+          id: user.id,
+          email: user.email,
+          person: data,
         });
+      });
     })
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving tutorials.",
+          err.message || "Some error occurred while retrieving user data.",
       });
     });
 };
 
-exports.findOne = (req, res) => {
-  const id = req.params.id;
+exports.findFilms = (req, res) => {
+  User.findByPk(req.userId)
+    .then((user) => {
+      getSwPerson(user.swPeopleId).then((data) => {
+        const filmIds = idFromURI(data.films);
 
-  User.findByPk(id)
-    .then((data) => {
-      res.send(data);
+        Promise.all(filmIds.map((id) => getSwFilm(id))).then((values) => {
+          res.status(200).send({
+            films: values,
+          });
+        });
+      });
     })
     .catch((err) => {
       res.status(500).send({
-        message: "Error retrieving Tutorial with id=" + id,
+        message: err.message || "Some error occurred while retrieving films.",
+      });
+    });
+};
+
+exports.findOneFilm = (req, res) => {
+  const id = req.params.id;
+
+  User.findByPk(req.userId)
+    .then((user) => {
+      getSwPerson(user.swPeopleId).then((data) => {
+        const filmIds = idFromURI(data.films);
+
+        if (!filmIds.includes(id)) {
+          return res.status(403).send({
+            message: "No access to this film!",
+          });
+        }
+
+        getSwFilm(id).then((film) => {
+          res.status(200).send({
+            film,
+          });
+        });
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving films.",
       });
     });
 };
