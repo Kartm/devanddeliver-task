@@ -11,7 +11,23 @@ module.exports = (app) => {
 
   router.get("/", authenticateToken, users.find);
 
-  // router.get("/:id", users.findOne);
+  router.get("/films", authenticateToken, users.findFilms);
+
+  router.get("/films/:id", authenticateToken, users.findOneFilm);
+
+  router.get("/species", authenticateToken, users.findSpecies);
+
+  router.get("/species/:id", authenticateToken, users.findOneSpecies);
+
+  router.get("/vehicles", authenticateToken, users.findVehicles);
+
+  router.get("/vehicles/:id", authenticateToken, users.findOneVehicle);
+
+  router.get("/starships", authenticateToken, users.findStarships);
+
+  router.get("/starships/:id", authenticateToken, users.findOneStarship);
+
+  router.get("/planet", authenticateToken, users.findPlanet);
 
   app.use("/api/user", router);
 };

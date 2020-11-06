@@ -1,35 +1,24 @@
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const fetch = require("node-fetch");
 
-const CacheService = require("../services/cache.service");
 const randomInteger = require("../utils/randomInteger");
+const idFromURIArray = require("../utils/idFromURIArray");
 const db = require("../models");
+const {
+  getAllSwPeople,
+  getSwHero,
+  getSwFilm,
+  getSwSpecies,
+  getSwVehicle,
+  getSwStarship,
+  getSwPlanet,
+} = require("../services/swapi.service");
 const User = db.users;
-
-const cache = new CacheService(60 * 60 * 24); // cache for 24 hours
-
-function randomSwPeopleId() {
-  return new Promise((resolve) => {
-    fetch("https://swapi.dev/api/people/", {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    })
-      .then(async (response) => {
-        response.json().then((j) => {
-          resolve(randomInteger(1, j.count));
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  });
-}
 
 exports.register = async (req, res) => {
   if (!req.body.email || !req.body.password) {
     res.status(400).send({
-      message: "Content can not be empty.",
+      message: "Email and password cannot be empty.",
     });
     return;
   }
@@ -39,20 +28,26 @@ exports.register = async (req, res) => {
     .update(req.body.password)
     .digest("hex");
 
+  const allSwPeople = await getAllSwPeople();
+  const swHeroId = randomInteger(1, allSwPeople.count);
+
   const user = {
     email: req.body.email,
     passwordHash,
-    swPeopleId: await randomSwPeopleId(),
+    swHeroId,
   };
 
   User.create(user)
     .then((data) => {
-      res.send(data);
+      res.send({
+        id: data.id,
+        email: data.email,
+        swHeroId: data.swHeroId,
+      });
     })
     .catch((err) => {
       res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating the Tutorial.",
+        message: err.message || "Some error occurred while creating the user.",
       });
     });
 };
@@ -65,7 +60,7 @@ exports.login = (req, res) => {
   })
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: "User Not found." });
+        return res.status(404).send({ message: "User not found." });
       }
 
       const passwordHash = crypto
@@ -78,7 +73,7 @@ exports.login = (req, res) => {
       if (!passwordIsValid) {
         return res.status(401).send({
           accessToken: null,
-          message: "Invalid Password!",
+          message: "Invalid password!",
         });
       }
 
@@ -89,7 +84,7 @@ exports.login = (req, res) => {
       res.status(200).send({
         id: user.id,
         email: user.email,
-        swPeopleId: user.swPeopleId,
+        swHeroId: user.swHeroId,
         accessToken: token,
       });
     })
@@ -99,48 +94,237 @@ exports.login = (req, res) => {
 };
 
 exports.find = (req, res) => {
-  // var condition = req.userId ? { id: { [Op.like]: `%${req.userId}%` } } : null;
-  // todo check if not undefined
-
   User.findByPk(req.userId)
     .then((user) => {
-      const cacheKey = `people_${user.swPeopleId}`;
-
-      return cache
-        .get(cacheKey, () =>
-          fetch(`https://swapi.dev/api/people/${user.swPeopleId}`, {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-          }).then(async (response) => {
-            return await response.json();
-          })
-        )
-        .then((j) => {
-          res.status(200).send({
-            id: user.id,
-            email: user.email,
-            people: j,
-          });
+      getSwHero(user.swHeroId).then((data) => {
+        res.status(200).send({
+          id: user.id,
+          email: user.email,
+          hero: data,
         });
+      });
     })
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving tutorials.",
+          err.message || "Some error occurred while retrieving user data.",
       });
     });
 };
 
-exports.findOne = (req, res) => {
-  const id = req.params.id;
+exports.findFilms = (req, res) => {
+  User.findByPk(req.userId)
+    .then((user) => {
+      getSwHero(user.swHeroId).then((data) => {
+        const filmIds = idFromURIArray(data.films);
 
-  User.findByPk(id)
-    .then((data) => {
-      res.send(data);
+        Promise.all(filmIds.map((id) => getSwFilm(id))).then((values) => {
+          res.status(200).send({
+            films: values,
+          });
+        });
+      });
     })
     .catch((err) => {
       res.status(500).send({
-        message: "Error retrieving Tutorial with id=" + id,
+        message: err.message || "Some error occurred while retrieving films.",
+      });
+    });
+};
+
+exports.findOneFilm = (req, res) => {
+  const id = req.params.id;
+
+  User.findByPk(req.userId)
+    .then((user) => {
+      getSwHero(user.swHeroId).then((data) => {
+        const filmIds = idFromURIArray(data.films);
+
+        if (!filmIds.includes(id)) {
+          return res.status(403).send({
+            message: "No access to this film!",
+          });
+        }
+
+        getSwFilm(id).then((film) => {
+          res.status(200).send({
+            film,
+          });
+        });
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving film.",
+      });
+    });
+};
+
+exports.findSpecies = (req, res) => {
+  User.findByPk(req.userId)
+    .then((user) => {
+      getSwHero(user.swHeroId).then((data) => {
+        const speciesIds = idFromURIArray(data.species);
+
+        Promise.all(speciesIds.map((id) => getSwSpecies(id))).then((values) => {
+          res.status(200).send({
+            species: values,
+          });
+        });
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving species.",
+      });
+    });
+};
+
+exports.findOneSpecies = (req, res) => {
+  const id = req.params.id;
+
+  User.findByPk(req.userId)
+    .then((user) => {
+      getSwHero(user.swHeroId).then((data) => {
+        const speciesIds = idFromURIArray(data.species);
+
+        if (!speciesIds.includes(id)) {
+          return res.status(403).send({
+            message: "No access to this species!",
+          });
+        }
+
+        getSwSpecies(id).then((species) => {
+          res.status(200).send({
+            species,
+          });
+        });
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving species.",
+      });
+    });
+};
+
+exports.findVehicles = (req, res) => {
+  User.findByPk(req.userId)
+    .then((user) => {
+      getSwHero(user.swHeroId).then((data) => {
+        const vehicleIds = idFromURIArray(data.vehicles);
+
+        Promise.all(vehicleIds.map((id) => getSwVehicle(id))).then((values) => {
+          res.status(200).send({
+            vehicles: values,
+          });
+        });
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving vehicles.",
+      });
+    });
+};
+
+exports.findOneVehicle = (req, res) => {
+  const id = req.params.id;
+
+  User.findByPk(req.userId)
+    .then((user) => {
+      getSwHero(user.swHeroId).then((data) => {
+        const vehicleIds = idFromURIArray(data.vehicles);
+
+        if (!vehicleIds.includes(id)) {
+          return res.status(403).send({
+            message: "No access to this vehicle!",
+          });
+        }
+
+        getSwVehicle(id).then((vehicle) => {
+          res.status(200).send({
+            vehicle,
+          });
+        });
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving vehicle.",
+      });
+    });
+};
+
+exports.findStarships = (req, res) => {
+  User.findByPk(req.userId)
+    .then((user) => {
+      getSwHero(user.swHeroId).then((data) => {
+        const starshipIds = idFromURIArray(data.starships);
+
+        Promise.all(starshipIds.map((id) => getSwStarship(id))).then(
+          (values) => {
+            res.status(200).send({
+              starships: values,
+            });
+          }
+        );
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving starships.",
+      });
+    });
+};
+
+exports.findOneStarship = (req, res) => {
+  const id = req.params.id;
+
+  User.findByPk(req.userId)
+    .then((user) => {
+      getSwHero(user.swHeroId).then((data) => {
+        const starshipIds = idFromURIArray(data.starships);
+
+        if (!starshipIds.includes(id)) {
+          return res.status(403).send({
+            message: "No access to this starship!",
+          });
+        }
+
+        getSwStarship(id).then((starship) => {
+          res.status(200).send({
+            starship,
+          });
+        });
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving starship.",
+      });
+    });
+};
+
+exports.findPlanet = (req, res) => {
+  User.findByPk(req.userId)
+    .then((user) => {
+      getSwHero(user.swHeroId).then((data) => {
+        const planetId = idFromURIArray([data.homeworld])[0];
+
+        getSwPlanet(planetId).then((planet) => {
+          res.status(200).send({
+            planet,
+          });
+        });
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving planet.",
       });
     });
 };
