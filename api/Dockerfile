@@ -3,6 +3,7 @@ FROM node:10-slim
 WORKDIR /app
 
 RUN npm install -g nodemon
+RUN npm install -g ts-node
 
 COPY package*.json ./
 

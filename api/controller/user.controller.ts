@@ -1,10 +1,9 @@
-const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
-
-const randomInteger = require("../utils/randomInteger");
-const idFromURIArray = require("../utils/idFromURIArray");
-const db = require("../models");
-const {
+import NodeCrypto from "crypto";
+import jwt from "jsonwebtoken";
+import randomInteger from "../utils/randomInteger";
+import idFromURIArray from "../utils/idFromURIArray";
+import db from "../models";
+import {
   getAllSwPeople,
   getSwHero,
   getSwFilm,
@@ -12,10 +11,11 @@ const {
   getSwVehicle,
   getSwStarship,
   getSwPlanet,
-} = require("../services/swapi.service");
+} from "../services/swapi.service";
+
 const User = db.users;
 
-exports.register = async (req, res) => {
+export async function register(req, res) {
   if (!req.body.email || !req.body.password) {
     res.status(400).send({
       message: "Email and password cannot be empty.",
@@ -23,12 +23,11 @@ exports.register = async (req, res) => {
     return;
   }
 
-  const passwordHash = crypto
-    .createHash("sha256")
+  const passwordHash = NodeCrypto.createHash("sha256")
     .update(req.body.password)
     .digest("hex");
 
-  const allSwPeople = await getAllSwPeople();
+  const allSwPeople: any = await getAllSwPeople();
   const swHeroId = randomInteger(1, allSwPeople.count);
 
   const user = {
@@ -50,9 +49,9 @@ exports.register = async (req, res) => {
         message: err.message || "Some error occurred while creating the user.",
       });
     });
-};
+}
 
-exports.login = (req, res) => {
+export async function login(req, res) {
   User.findOne({
     where: {
       email: req.body.email,
@@ -63,8 +62,7 @@ exports.login = (req, res) => {
         return res.status(404).send({ message: "User not found." });
       }
 
-      const passwordHash = crypto
-        .createHash("sha256")
+      const passwordHash = NodeCrypto.createHash("sha256")
         .update(req.body.password)
         .digest("hex");
 
@@ -91,12 +89,12 @@ exports.login = (req, res) => {
     .catch((err) => {
       res.status(500).send({ message: err.message });
     });
-};
+}
 
-exports.find = (req, res) => {
+export async function find(req, res) {
   User.findByPk(req.userId)
     .then((user) => {
-      getSwHero(user.swHeroId).then((data) => {
+      getSwHero(user.swHeroId).then((data: any) => {
         res.status(200).send({
           id: user.id,
           email: user.email,
@@ -110,12 +108,12 @@ exports.find = (req, res) => {
           err.message || "Some error occurred while retrieving user data.",
       });
     });
-};
+}
 
-exports.findFilms = (req, res) => {
+export async function findFilms(req, res) {
   User.findByPk(req.userId)
     .then((user) => {
-      getSwHero(user.swHeroId).then((data) => {
+      getSwHero(user.swHeroId).then((data: any) => {
         const filmIds = idFromURIArray(data.films);
 
         Promise.all(filmIds.map((id) => getSwFilm(id))).then((values) => {
@@ -130,14 +128,14 @@ exports.findFilms = (req, res) => {
         message: err.message || "Some error occurred while retrieving films.",
       });
     });
-};
+}
 
-exports.findOneFilm = (req, res) => {
+export async function findOneFilm(req, res) {
   const id = req.params.id;
 
   User.findByPk(req.userId)
     .then((user) => {
-      getSwHero(user.swHeroId).then((data) => {
+      getSwHero(user.swHeroId).then((data: any) => {
         const filmIds = idFromURIArray(data.films);
 
         if (!filmIds.includes(id)) {
@@ -158,12 +156,12 @@ exports.findOneFilm = (req, res) => {
         message: err.message || "Some error occurred while retrieving film.",
       });
     });
-};
+}
 
-exports.findSpecies = (req, res) => {
+export async function findSpecies(req, res) {
   User.findByPk(req.userId)
     .then((user) => {
-      getSwHero(user.swHeroId).then((data) => {
+      getSwHero(user.swHeroId).then((data: any) => {
         const speciesIds = idFromURIArray(data.species);
 
         Promise.all(speciesIds.map((id) => getSwSpecies(id))).then((values) => {
@@ -178,14 +176,14 @@ exports.findSpecies = (req, res) => {
         message: err.message || "Some error occurred while retrieving species.",
       });
     });
-};
+}
 
-exports.findOneSpecies = (req, res) => {
+export async function findOneSpecies(req, res) {
   const id = req.params.id;
 
   User.findByPk(req.userId)
     .then((user) => {
-      getSwHero(user.swHeroId).then((data) => {
+      getSwHero(user.swHeroId).then((data: any) => {
         const speciesIds = idFromURIArray(data.species);
 
         if (!speciesIds.includes(id)) {
@@ -206,12 +204,12 @@ exports.findOneSpecies = (req, res) => {
         message: err.message || "Some error occurred while retrieving species.",
       });
     });
-};
+}
 
-exports.findVehicles = (req, res) => {
+export async function findVehicles(req, res) {
   User.findByPk(req.userId)
     .then((user) => {
-      getSwHero(user.swHeroId).then((data) => {
+      getSwHero(user.swHeroId).then((data: any) => {
         const vehicleIds = idFromURIArray(data.vehicles);
 
         Promise.all(vehicleIds.map((id) => getSwVehicle(id))).then((values) => {
@@ -227,14 +225,14 @@ exports.findVehicles = (req, res) => {
           err.message || "Some error occurred while retrieving vehicles.",
       });
     });
-};
+}
 
-exports.findOneVehicle = (req, res) => {
+export async function findOneVehicle(req, res) {
   const id = req.params.id;
 
   User.findByPk(req.userId)
     .then((user) => {
-      getSwHero(user.swHeroId).then((data) => {
+      getSwHero(user.swHeroId).then((data: any) => {
         const vehicleIds = idFromURIArray(data.vehicles);
 
         if (!vehicleIds.includes(id)) {
@@ -255,12 +253,12 @@ exports.findOneVehicle = (req, res) => {
         message: err.message || "Some error occurred while retrieving vehicle.",
       });
     });
-};
+}
 
-exports.findStarships = (req, res) => {
+export async function findStarships(req, res) {
   User.findByPk(req.userId)
     .then((user) => {
-      getSwHero(user.swHeroId).then((data) => {
+      getSwHero(user.swHeroId).then((data: any) => {
         const starshipIds = idFromURIArray(data.starships);
 
         Promise.all(starshipIds.map((id) => getSwStarship(id))).then(
@@ -278,14 +276,14 @@ exports.findStarships = (req, res) => {
           err.message || "Some error occurred while retrieving starships.",
       });
     });
-};
+}
 
-exports.findOneStarship = (req, res) => {
+export async function findOneStarship(req, res) {
   const id = req.params.id;
 
   User.findByPk(req.userId)
     .then((user) => {
-      getSwHero(user.swHeroId).then((data) => {
+      getSwHero(user.swHeroId).then((data: any) => {
         const starshipIds = idFromURIArray(data.starships);
 
         if (!starshipIds.includes(id)) {
@@ -307,12 +305,12 @@ exports.findOneStarship = (req, res) => {
           err.message || "Some error occurred while retrieving starship.",
       });
     });
-};
+}
 
-exports.findPlanet = (req, res) => {
+export async function findPlanet(req, res) {
   User.findByPk(req.userId)
     .then((user) => {
-      getSwHero(user.swHeroId).then((data) => {
+      getSwHero(user.swHeroId).then((data: any) => {
         const planetId = idFromURIArray([data.homeworld])[0];
 
         getSwPlanet(planetId).then((planet) => {
@@ -327,4 +325,4 @@ exports.findPlanet = (req, res) => {
         message: err.message || "Some error occurred while retrieving planet.",
       });
     });
-};
+}

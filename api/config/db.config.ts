@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   host: process.env.DATABASE_HOST || "127.0.0.1",
   user: "root",
   password: "123",
