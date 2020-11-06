@@ -15,5 +15,9 @@ module.exports = (app) => {
 
   router.get("/films/:id", authenticateToken, users.findOneFilm);
 
+  router.get("/species", authenticateToken, users.findSpecies);
+
+  router.get("/species/:id", authenticateToken, users.findOneSpecies);
+
   app.use("/api/user", router);
 };

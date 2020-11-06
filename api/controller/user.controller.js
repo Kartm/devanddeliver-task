@@ -8,6 +8,7 @@ const {
   getAllSwPeople,
   getSwPerson,
   getSwFilm,
+  getSwSpecies,
 } = require("../services/swapi.service");
 const User = db.users;
 
@@ -151,6 +152,54 @@ exports.findOneFilm = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message: err.message || "Some error occurred while retrieving films.",
+      });
+    });
+};
+
+exports.findSpecies = (req, res) => {
+  User.findByPk(req.userId)
+    .then((user) => {
+      getSwPerson(user.swPeopleId).then((data) => {
+        const speciesIds = idFromURI(data.species);
+
+        Promise.all(speciesIds.map((id) => getSwSpecies(id))).then((values) => {
+          res.status(200).send({
+            species: values,
+          });
+        });
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving species.",
+      });
+    });
+};
+
+exports.findOneSpecies = (req, res) => {
+  const id = req.params.id;
+
+  User.findByPk(req.userId)
+    .then((user) => {
+      getSwPerson(user.swPeopleId).then((data) => {
+        const speciesIds = idFromURI(data.species);
+
+        if (!speciesIds.includes(id)) {
+          return res.status(403).send({
+            message: "No access to this film!",
+          });
+        }
+
+        getSwSpecies(id).then((film) => {
+          res.status(200).send({
+            film,
+          });
+        });
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving species.",
       });
     });
 };
