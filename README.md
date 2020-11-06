@@ -9,7 +9,7 @@
 ## Register
 Used to register a user. Automatically assigns a random Star Wars person.
 
-**URL** : `/api/register`
+**URL** : `/api/user/register`
 
 **Method** : `POST`
 
@@ -39,7 +39,7 @@ Used to register a user. Automatically assigns a random Star Wars person.
 ## Login
 Used to login a user. Responds with a JWT token.
 
-**URL** : `/api/login`
+**URL** : `/api/user/login`
 
 **Method** : `POST`
 
