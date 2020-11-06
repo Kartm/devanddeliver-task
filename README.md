@@ -1,12 +1,29 @@
-# Testing the API:
+# Table of contents
+
+- [Table of contents](#table-of-contents)
+  - [Testing the API](#testing-the-api)
+  - [Available endpoints](#available-endpoints)
+    - [Register](#register)
+    - [Login](#login)
+    - [Fetching the user](#fetching-the-user)
+    - [Getting hero films](#getting-hero-films)
+    - [Getting hero films by id](#getting-hero-films-by-id)
+    - [Getting hero species](#getting-hero-species)
+    - [Getting hero species by id](#getting-hero-species-by-id)
+    - [Getting hero vehicles](#getting-hero-vehicles)
+    - [Getting hero vehicles by id](#getting-hero-vehicles-by-id)
+    - [Getting hero starships](#getting-hero-starships)
+    - [Getting hero starships by id](#getting-hero-starships-by-id)
+    - [Getting hero planet](#getting-hero-planet)
+
+## Testing the API
 
 1. Start the Docker daemon: `sudo dockerd`
 2. Compose the Docker: `sudo docker-compose up`
 
+## Available endpoints
 
-# Available endpoints:
-
-## Register
+### Register
 Used to register a user. Automatically assigns a random Star Wars person.
 
 **URL** : `/api/user/register`
@@ -24,19 +41,19 @@ Used to register a user. Automatically assigns a random Star Wars person.
 }
 ```
 
-### Response
+**Response**
 
 **Code** : `200 OK`
 
 ```json
 {
-    "id": 8,
+    "id": 2,
     "email": "some@mail.com",
-    "swPeopleId": 80
+    "swHeroId": 72
 }
 ```
 
-## Login
+### Login
 Used to login a user. Responds with a JWT token.
 
 **URL** : `/api/user/login`
@@ -54,20 +71,20 @@ Used to login a user. Responds with a JWT token.
 }
 ```
 
-### Response
+**Response**
 
 **Code** : `200 OK`
 
 ```json
 {
-    "id": 5,
+    "id": 2,
     "email": "some@mail.com",
-    "swPeopleId": 20,
-    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTYwNDYxMTgyNCwiZXhwIjoxNjA0Njk4MjI0fQ.X0b64Nu_gtmeZVdzTbUL0rph8PTsKsPIRhQXuN5-7Fs"
+    "swHeroId": 72,
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTYwNDY1MDU2MywiZXhwIjoxNjA0NzM2OTYzfQ.Xbj4LpYdKEQnL4dHEVkDYhrxBdH1rD59J0vzLFf52hI"
 }
 ```
 
-## Fetching user
+### Fetching the user
 Sends the user data.
 
 **URL** : `/api/user`
@@ -82,46 +99,45 @@ Sends the user data.
 Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTYwNDYxMDA5MywiZXhwIjoxNjA0Njk2NDkzfQ.gWMgf6OMG14vjMI6u2imemUm0oFt8ZteSCwpwQNgHYg
 ```
 
-### Response
+**Response**
 
 **Code** : `200 OK`
 
 ```json
 {
-    "id": 5,
-    "email": "some@mail.com",
-    "person": {
-        "name": "Yoda",
-        "height": "66",
-        "mass": "17",
-        "hair_color": "white",
-        "skin_color": "green",
+    "id": 1,
+    "email": "as3d@mail.com",
+    "hero": {
+        "name": "Leia Organa",
+        "height": "150",
+        "mass": "49",
+        "hair_color": "brown",
+        "skin_color": "light",
         "eye_color": "brown",
-        "birth_year": "896BBY",
-        "gender": "male",
-        "homeworld": "http://swapi.dev/api/planets/28/",
+        "birth_year": "19BBY",
+        "gender": "female",
+        "homeworld": "http://swapi.dev/api/planets/2/",
         "films": [
+            "http://swapi.dev/api/films/1/",
             "http://swapi.dev/api/films/2/",
             "http://swapi.dev/api/films/3/",
-            "http://swapi.dev/api/films/4/",
-            "http://swapi.dev/api/films/5/",
             "http://swapi.dev/api/films/6/"
         ],
-        "species": [
-            "http://swapi.dev/api/species/6/"
+        "species": [],
+        "vehicles": [
+            "http://swapi.dev/api/vehicles/30/"
         ],
-        "vehicles": [],
         "starships": [],
-        "created": "2014-12-15T12:26:01.042000Z",
-        "edited": "2014-12-20T21:17:50.345000Z",
-        "url": "http://swapi.dev/api/people/20/"
+        "created": "2014-12-10T15:20:09.791000Z",
+        "edited": "2014-12-20T21:17:50.315000Z",
+        "url": "http://swapi.dev/api/people/5/"
     }
 }
 ```
 
 ---
 
-## Hero films
+### Getting hero films
 Responds the films associated with the user's Star Wars person.
 
 **URL** : `/api/user/films`
@@ -136,7 +152,7 @@ Responds the films associated with the user's Star Wars person.
 Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTYwNDYxMDA5MywiZXhwIjoxNjA0Njk2NDkzfQ.gWMgf6OMG14vjMI6u2imemUm0oFt8ZteSCwpwQNgHYg
 ```
 
-### Response
+**Response**
 
 **Code** : `200 OK`
 
@@ -207,7 +223,7 @@ Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTYwNDYxMDA5
     ]
 ```
 
-## Hero films by id
+### Getting hero films by id
 Responds the films associated with the user's Star Wars person by id.
 
 **URL** : `/api/user/films/{id}`
@@ -222,7 +238,7 @@ Responds the films associated with the user's Star Wars person by id.
 Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTYwNDYxMDA5MywiZXhwIjoxNjA0Njk2NDkzfQ.gWMgf6OMG14vjMI6u2imemUm0oFt8ZteSCwpwQNgHYg
 ```
 
-### Response
+**Response**
 
 **Code** : `200 OK`
 
@@ -295,7 +311,7 @@ Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTYwNDYxMDA5
 
 ---
 
-## Hero species
+### Getting hero species
 Responds the films associated with the user's Star Wars person.
 
 **URL** : `/api/user/species`
@@ -310,7 +326,7 @@ Responds the films associated with the user's Star Wars person.
 Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTYwNDYxMDA5MywiZXhwIjoxNjA0Njk2NDkzfQ.gWMgf6OMG14vjMI6u2imemUm0oFt8ZteSCwpwQNgHYg
 ```
 
-### Response
+**Response**
 
 **Code** : `200 OK`
 
@@ -443,7 +459,7 @@ Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTYwNDYxMDA5
 }
 ```
 
-## Hero species by id
+### Getting hero species by id
 Responds the films associated with the user's Star Wars person by id.
 
 **URL** : `/api/user/films/{id}`
@@ -458,7 +474,7 @@ Responds the films associated with the user's Star Wars person by id.
 Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTYwNDYxMDA5MywiZXhwIjoxNjA0Njk2NDkzfQ.gWMgf6OMG14vjMI6u2imemUm0oFt8ZteSCwpwQNgHYg
 ```
 
-### Response
+**Response**
 
 **Code** : `200 OK`
 
@@ -494,7 +510,7 @@ Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTYwNDYxMDA5
 
 ---
 
-## Hero vehicles
+### Getting hero vehicles
 Returns the vehicles associated with the user's Star Wars person.
 
 **URL** : `/api/user/vehicles`
@@ -509,16 +525,42 @@ Returns the vehicles associated with the user's Star Wars person.
 Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTYwNDYxMDA5MywiZXhwIjoxNjA0Njk2NDkzfQ.gWMgf6OMG14vjMI6u2imemUm0oFt8ZteSCwpwQNgHYg
 ```
 
-### Response
+**Response**
 
 **Code** : `200 OK`
 
 ```json
-
+{
+    "vehicles": [
+        {
+            "name": "Imperial Speeder Bike",
+            "model": "74-Z speeder bike",
+            "manufacturer": "Aratech Repulsor Company",
+            "cost_in_credits": "8000",
+            "length": "3",
+            "max_atmosphering_speed": "360",
+            "crew": "1",
+            "passengers": "1",
+            "cargo_capacity": "4",
+            "consumables": "1 day",
+            "vehicle_class": "speeder",
+            "pilots": [
+                "http://swapi.dev/api/people/1/",
+                "http://swapi.dev/api/people/5/"
+            ],
+            "films": [
+                "http://swapi.dev/api/films/3/"
+            ],
+            "created": "2014-12-18T11:20:04.625000Z",
+            "edited": "2014-12-20T21:30:21.693000Z",
+            "url": "http://swapi.dev/api/vehicles/30/"
+        }
+    ]
+}
 ```
 
-## Hero vehicles by id
-Returns the films associated with the user's Star Wars person by id.
+### Getting hero vehicles by id
+Returns vehicles associated with the user's Star Wars person by id.
 
 **URL** : `/api/user/vehicles/{id}`
 
@@ -532,10 +574,188 @@ Returns the films associated with the user's Star Wars person by id.
 Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTYwNDYxMDA5MywiZXhwIjoxNjA0Njk2NDkzfQ.gWMgf6OMG14vjMI6u2imemUm0oFt8ZteSCwpwQNgHYg
 ```
 
-### Response
+**Response**
 
 **Code** : `200 OK`
 
 ```json
+{
+    "vehicle": {
+        "name": "Imperial Speeder Bike",
+        "model": "74-Z speeder bike",
+        "manufacturer": "Aratech Repulsor Company",
+        "cost_in_credits": "8000",
+        "length": "3",
+        "max_atmosphering_speed": "360",
+        "crew": "1",
+        "passengers": "1",
+        "cargo_capacity": "4",
+        "consumables": "1 day",
+        "vehicle_class": "speeder",
+        "pilots": [
+            "http://swapi.dev/api/people/1/",
+            "http://swapi.dev/api/people/5/"
+        ],
+        "films": [
+            "http://swapi.dev/api/films/3/"
+        ],
+        "created": "2014-12-18T11:20:04.625000Z",
+        "edited": "2014-12-20T21:30:21.693000Z",
+        "url": "http://swapi.dev/api/vehicles/30/"
+    }
+}
+```
 
+---
+
+### Getting hero starships
+Returns the starships associated with the user's Star Wars person.
+
+**URL** : `/api/user/starships`
+
+**Method** : `GET`
+
+**Auth required** : YES
+
+**Example authorization header**
+
+```
+Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTYwNDYxMDA5MywiZXhwIjoxNjA0Njk2NDkzfQ.gWMgf6OMG14vjMI6u2imemUm0oFt8ZteSCwpwQNgHYg
+```
+
+**Response**
+
+**Code** : `200 OK`
+
+```json
+{
+    "starships": [
+        {
+            "name": "Millennium Falcon",
+            "model": "YT-1300 light freighter",
+            "manufacturer": "Corellian Engineering Corporation",
+            "cost_in_credits": "100000",
+            "length": "34.37",
+            "max_atmosphering_speed": "1050",
+            "crew": "4",
+            "passengers": "6",
+            "cargo_capacity": "100000",
+            "consumables": "2 months",
+            "hyperdrive_rating": "0.5",
+            "MGLT": "75",
+            "starship_class": "Light freighter",
+            "pilots": [
+                "http://swapi.dev/api/people/13/",
+                "http://swapi.dev/api/people/14/",
+                "http://swapi.dev/api/people/25/",
+                "http://swapi.dev/api/people/31/"
+            ],
+            "films": [
+                "http://swapi.dev/api/films/1/",
+                "http://swapi.dev/api/films/2/",
+                "http://swapi.dev/api/films/3/"
+            ],
+            "created": "2014-12-10T16:59:45.094000Z",
+            "edited": "2014-12-20T21:23:49.880000Z",
+            "url": "http://swapi.dev/api/starships/10/"
+        }
+    ]
+}
+```
+
+### Getting hero starships by id
+Returns starships associated with the user's Star Wars person by id.
+
+**URL** : `/api/user/starships/{id}`
+
+**Method** : `GET`
+
+**Auth required** : YES
+
+**Example authorization header**
+
+```
+Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTYwNDYxMDA5MywiZXhwIjoxNjA0Njk2NDkzfQ.gWMgf6OMG14vjMI6u2imemUm0oFt8ZteSCwpwQNgHYg
+```
+
+**Response**
+
+**Code** : `200 OK`
+
+```json
+{
+    "starship": {
+        "name": "Millennium Falcon",
+        "model": "YT-1300 light freighter",
+        "manufacturer": "Corellian Engineering Corporation",
+        "cost_in_credits": "100000",
+        "length": "34.37",
+        "max_atmosphering_speed": "1050",
+        "crew": "4",
+        "passengers": "6",
+        "cargo_capacity": "100000",
+        "consumables": "2 months",
+        "hyperdrive_rating": "0.5",
+        "MGLT": "75",
+        "starship_class": "Light freighter",
+        "pilots": [
+            "http://swapi.dev/api/people/13/",
+            "http://swapi.dev/api/people/14/",
+            "http://swapi.dev/api/people/25/",
+            "http://swapi.dev/api/people/31/"
+        ],
+        "films": [
+            "http://swapi.dev/api/films/1/",
+            "http://swapi.dev/api/films/2/",
+            "http://swapi.dev/api/films/3/"
+        ],
+        "created": "2014-12-10T16:59:45.094000Z",
+        "edited": "2014-12-20T21:23:49.880000Z",
+        "url": "http://swapi.dev/api/starships/10/"
+    }
+}
+```
+
+---
+
+### Getting hero planet
+Returns the planet associated with the user's Star Wars person.
+
+**URL** : `/api/user/planet`
+
+**Method** : `GET`
+
+**Auth required** : YES
+
+**Example authorization header**
+
+```
+Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTYwNDYxMDA5MywiZXhwIjoxNjA0Njk2NDkzfQ.gWMgf6OMG14vjMI6u2imemUm0oFt8ZteSCwpwQNgHYg
+```
+
+**Response**
+
+**Code** : `200 OK`
+
+```json
+{
+    "planet": {
+        "name": "Sullust",
+        "rotation_period": "20",
+        "orbital_period": "263",
+        "diameter": "12780",
+        "climate": "superheated",
+        "gravity": "1",
+        "terrain": "mountains, volcanoes, rocky deserts",
+        "surface_water": "5",
+        "population": "18500000000",
+        "residents": [
+            "http://swapi.dev/api/people/31/"
+        ],
+        "films": [],
+        "created": "2014-12-18T11:25:40.243000Z",
+        "edited": "2014-12-20T20:58:18.474000Z",
+        "url": "http://swapi.dev/api/planets/33/"
+    }
+}
 ```
