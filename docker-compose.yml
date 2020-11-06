@@ -10,7 +10,7 @@ services:
       MYSQL_ROOT_PASSWORD: 123
   api:
     build: ./api
-    command: nodemon --legacy-watch app.js
+    command: nodemon --legacy-watch app.ts
     volumes:
      - ./api:/app/api
     ports:

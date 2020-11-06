@@ -16,4 +16,4 @@ ENV PORT 8123
 
 EXPOSE 8123
 
-CMD ["node", "app.js"]
+CMD ["node", "app.ts"]
