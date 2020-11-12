@@ -1,12 +1,12 @@
-import express from "express";
+import express, { Request } from "express";
 import jwt from "jsonwebtoken";
 
-export interface CustomRequest extends express.Request {
+export interface RequestWithMetaData extends Request {
   userId: number;
 }
 
 export default function authenticateToken(
-  req: CustomRequest,
+  req: RequestWithMetaData,
   res: express.Response,
   next
 ) {

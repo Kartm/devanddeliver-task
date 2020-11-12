@@ -1,8 +1,8 @@
-import express from "express";
+import express, { Response } from "express";
 import NodeCrypto from "crypto";
 import jwt from "jsonwebtoken";
 import randomInteger from "../utils/randomInteger";
-import idFromURIArray from "../utils/idFromURIArray";
+import idFromURIArray from "../utils/idsFromMultipleURI";
 import db from "../models";
 import {
   getAllSwPeople,
@@ -13,11 +13,10 @@ import {
   getSwStarship,
   getSwPlanet,
 } from "../services/swapi.service";
-import { CustomRequest } from "../middleware/authenticateToken";
+import { RequestWithMetaData } from "../middleware/authenticateToken";
+import { User } from "../models/user.model";
 
-const User = db.users;
-
-export async function register(req: CustomRequest, res: express.Response) {
+export async function register(req: RequestWithMetaData, res: Response) {
   if (!req.body.email || !req.body.password) {
     res.status(400).send({
       message: "Email and password cannot be empty.",
@@ -32,18 +31,19 @@ export async function register(req: CustomRequest, res: express.Response) {
   const allSwPeople: any = await getAllSwPeople();
   const swHeroId = randomInteger(1, allSwPeople.count);
 
-  const user = {
+  const newUser = {
     email: req.body.email,
     passwordHash,
     swHeroId,
   };
 
-  User.create(user)
-    .then((data) => {
+  db.users
+    .create(newUser)
+    .then((user: User) => {
       res.send({
-        id: data.id,
-        email: data.email,
-        swHeroId: data.swHeroId,
+        id: user.id,
+        email: user.email,
+        swHeroId: user.swHeroId,
       });
     })
     .catch((err) => {
@@ -53,13 +53,14 @@ export async function register(req: CustomRequest, res: express.Response) {
     });
 }
 
-export async function login(req: CustomRequest, res: express.Response) {
-  User.findOne({
-    where: {
-      email: req.body.email,
-    },
-  })
-    .then((user) => {
+export async function login(req: RequestWithMetaData, res: Response) {
+  db.users
+    .findOne({
+      where: {
+        email: req.body.email,
+      },
+    })
+    .then((user: User) => {
       if (!user) {
         return res.status(404).send({ message: "User not found." });
       }
@@ -93,10 +94,11 @@ export async function login(req: CustomRequest, res: express.Response) {
     });
 }
 
-export async function find(req: CustomRequest, res: express.Response) {
-  User.findByPk(req.userId)
-    .then((user) => {
-      getSwHero(user.swHeroId).then((data: any) => {
+export async function find(req: RequestWithMetaData, res: Response) {
+  db.users
+    .findByPk(req.userId)
+    .then((user: User) => {
+      getSwHero(user.swHeroId).then((data) => {
         res.status(200).send({
           id: user.id,
           email: user.email,
@@ -112,10 +114,11 @@ export async function find(req: CustomRequest, res: express.Response) {
     });
 }
 
-export async function findFilms(req: CustomRequest, res: express.Response) {
-  User.findByPk(req.userId)
-    .then((user) => {
-      getSwHero(user.swHeroId).then((data: any) => {
+export async function findFilms(req: RequestWithMetaData, res: Response) {
+  db.users
+    .findByPk(req.userId)
+    .then((user: User) => {
+      getSwHero(user.swHeroId).then((data) => {
         const filmIds = idFromURIArray(data.films);
 
         Promise.all(filmIds.map((id) => getSwFilm(id))).then((values) => {
@@ -132,12 +135,13 @@ export async function findFilms(req: CustomRequest, res: express.Response) {
     });
 }
 
-export async function findOneFilm(req: CustomRequest, res: express.Response) {
-  const id = req.params.id;
+export async function findOneFilm(req: RequestWithMetaData, res: Response) {
+  const id = parseInt(req.params.id);
 
-  User.findByPk(req.userId)
-    .then((user) => {
-      getSwHero(user.swHeroId).then((data: any) => {
+  db.users
+    .findByPk(req.userId)
+    .then((user: User) => {
+      getSwHero(user.swHeroId).then((data) => {
         const filmIds = idFromURIArray(data.films);
 
         if (!filmIds.includes(id)) {
@@ -160,10 +164,11 @@ export async function findOneFilm(req: CustomRequest, res: express.Response) {
     });
 }
 
-export async function findSpecies(req: CustomRequest, res: express.Response) {
-  User.findByPk(req.userId)
-    .then((user) => {
-      getSwHero(user.swHeroId).then((data: any) => {
+export async function findSpecies(req: RequestWithMetaData, res: Response) {
+  db.users
+    .findByPk(req.userId)
+    .then((user: User) => {
+      getSwHero(user.swHeroId).then((data) => {
         const speciesIds = idFromURIArray(data.species);
 
         Promise.all(speciesIds.map((id) => getSwSpecies(id))).then((values) => {
@@ -180,15 +185,13 @@ export async function findSpecies(req: CustomRequest, res: express.Response) {
     });
 }
 
-export async function findOneSpecies(
-  req: CustomRequest,
-  res: express.Response
-) {
-  const id = req.params.id;
+export async function findOneSpecies(req: RequestWithMetaData, res: Response) {
+  const id = parseInt(req.params.id);
 
-  User.findByPk(req.userId)
-    .then((user) => {
-      getSwHero(user.swHeroId).then((data: any) => {
+  db.users
+    .findByPk(req.userId)
+    .then((user: User) => {
+      getSwHero(user.swHeroId).then((data) => {
         const speciesIds = idFromURIArray(data.species);
 
         if (!speciesIds.includes(id)) {
@@ -211,10 +214,11 @@ export async function findOneSpecies(
     });
 }
 
-export async function findVehicles(req: CustomRequest, res: express.Response) {
-  User.findByPk(req.userId)
-    .then((user) => {
-      getSwHero(user.swHeroId).then((data: any) => {
+export async function findVehicles(req: RequestWithMetaData, res: Response) {
+  db.users
+    .findByPk(req.userId)
+    .then((user: User) => {
+      getSwHero(user.swHeroId).then((data) => {
         const vehicleIds = idFromURIArray(data.vehicles);
 
         Promise.all(vehicleIds.map((id) => getSwVehicle(id))).then((values) => {
@@ -232,15 +236,13 @@ export async function findVehicles(req: CustomRequest, res: express.Response) {
     });
 }
 
-export async function findOneVehicle(
-  req: CustomRequest,
-  res: express.Response
-) {
-  const id = req.params.id;
+export async function findOneVehicle(req: RequestWithMetaData, res: Response) {
+  const id = parseInt(req.params.id);
 
-  User.findByPk(req.userId)
-    .then((user) => {
-      getSwHero(user.swHeroId).then((data: any) => {
+  db.users
+    .findByPk(req.userId)
+    .then((user: User) => {
+      getSwHero(user.swHeroId).then((data) => {
         const vehicleIds = idFromURIArray(data.vehicles);
 
         if (!vehicleIds.includes(id)) {
@@ -263,10 +265,11 @@ export async function findOneVehicle(
     });
 }
 
-export async function findStarships(req: CustomRequest, res: express.Response) {
-  User.findByPk(req.userId)
-    .then((user) => {
-      getSwHero(user.swHeroId).then((data: any) => {
+export async function findStarships(req: RequestWithMetaData, res: Response) {
+  db.users
+    .findByPk(req.userId)
+    .then((user: User) => {
+      getSwHero(user.swHeroId).then((data) => {
         const starshipIds = idFromURIArray(data.starships);
 
         Promise.all(starshipIds.map((id) => getSwStarship(id))).then(
@@ -286,15 +289,13 @@ export async function findStarships(req: CustomRequest, res: express.Response) {
     });
 }
 
-export async function findOneStarship(
-  req: CustomRequest,
-  res: express.Response
-) {
-  const id = req.params.id;
+export async function findOneStarship(req: RequestWithMetaData, res: Response) {
+  const id = parseInt(req.params.id);
 
-  User.findByPk(req.userId)
-    .then((user) => {
-      getSwHero(user.swHeroId).then((data: any) => {
+  db.users
+    .findByPk(req.userId)
+    .then((user: User) => {
+      getSwHero(user.swHeroId).then((data) => {
         const starshipIds = idFromURIArray(data.starships);
 
         if (!starshipIds.includes(id)) {
@@ -318,10 +319,11 @@ export async function findOneStarship(
     });
 }
 
-export async function findPlanet(req: CustomRequest, res: express.Response) {
-  User.findByPk(req.userId)
-    .then((user) => {
-      getSwHero(user.swHeroId).then((data: any) => {
+export async function findPlanet(req: RequestWithMetaData, res: Response) {
+  db.users
+    .findByPk(req.userId)
+    .then((user: User) => {
+      getSwHero(user.swHeroId).then((data) => {
         const planetId = idFromURIArray([data.homeworld])[0];
 
         getSwPlanet(planetId).then((planet) => {
