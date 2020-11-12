@@ -1,16 +1,14 @@
-import Sequelize from "sequelize";
+import * as Sequelize from "sequelize";
 import dbConfig from "../config/db.config";
 import UserModel from "./user.model";
 
-const sequelize = new (Sequelize as any)(
+const sequelize = new Sequelize.Sequelize(
   dbConfig.database,
   dbConfig.user,
   dbConfig.password,
   {
     host: dbConfig.host,
-    dialect: dbConfig.dialect,
-    operatorsAliases: false,
-
+    dialect: "mysql",
     pool: {
       max: dbConfig.pool.max,
       min: dbConfig.pool.min,
@@ -23,5 +21,5 @@ const sequelize = new (Sequelize as any)(
 export default {
   Sequelize,
   sequelize,
-  users: UserModel(sequelize, Sequelize),
+  users: UserModel(sequelize),
 };

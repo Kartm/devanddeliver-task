@@ -1,10 +1,17 @@
 import fetch from "node-fetch";
+import Film from "../models/swapi/Film.model";
+import People from "../models/swapi/People.model";
+import Planet from "../models/swapi/Planet.model";
+import Results from "../models/swapi/Results.model";
+import Species from "../models/swapi/Species.model";
+import Starship from "../models/swapi/Starship.model";
+import Vehicle from "../models/swapi/Vehicle.model";
 import CacheService from "../services/cache.service";
 
 const cache = new CacheService(60 * 60 * 24); // cache for 24 hours
 
 export const getAllSwPeople = () =>
-  new Promise((res) => {
+  new Promise<Results<People>>((res) => {
     const cacheKey = `people_all`;
 
     return cache
@@ -16,13 +23,13 @@ export const getAllSwPeople = () =>
           return await response.json();
         })
       )
-      .then((j) => {
-        res(j);
+      .then((data: Results<People>) => {
+        res(data);
       });
   });
 
-export const getSwHero = (id) =>
-  new Promise((res) => {
+export const getSwHero = (id: number) =>
+  new Promise<People>((res) => {
     const cacheKey = `people_${id}`;
 
     return cache
@@ -34,13 +41,13 @@ export const getSwHero = (id) =>
           return await response.json();
         })
       )
-      .then((j) => {
-        res(j);
+      .then((data: People) => {
+        res(data);
       });
   });
 
-export const getSwFilm = (id) =>
-  new Promise((res) => {
+export const getSwFilm = (id: number) =>
+  new Promise<Film>((res) => {
     const cacheKey = `film_${id}`;
 
     return cache
@@ -52,13 +59,13 @@ export const getSwFilm = (id) =>
           return await response.json();
         })
       )
-      .then((j) => {
-        res(j);
+      .then((data: Film) => {
+        res(data);
       });
   });
 
-export const getSwSpecies = (id) =>
-  new Promise((res) => {
+export const getSwSpecies = (id: number) =>
+  new Promise<Species>((res) => {
     const cacheKey = `species_${id}`;
 
     return cache
@@ -70,13 +77,13 @@ export const getSwSpecies = (id) =>
           return await response.json();
         })
       )
-      .then((j) => {
-        res(j);
+      .then((data: Species) => {
+        res(data);
       });
   });
 
-export const getSwVehicle = (id) =>
-  new Promise((res) => {
+export const getSwVehicle = (id: number) =>
+  new Promise<Vehicle>((res) => {
     const cacheKey = `vehicle_${id}`;
 
     return cache
@@ -88,13 +95,13 @@ export const getSwVehicle = (id) =>
           return await response.json();
         })
       )
-      .then((j) => {
-        res(j);
+      .then((data: Vehicle) => {
+        res(data);
       });
   });
 
-export const getSwStarship = (id) =>
-  new Promise((res) => {
+export const getSwStarship = (id: number) =>
+  new Promise<Starship>((res) => {
     const cacheKey = `starship_${id}`;
 
     return cache
@@ -106,13 +113,13 @@ export const getSwStarship = (id) =>
           return await response.json();
         })
       )
-      .then((j) => {
-        res(j);
+      .then((data: Starship) => {
+        res(data);
       });
   });
 
-export const getSwPlanet = (id) =>
-  new Promise((res) => {
+export const getSwPlanet = (id: number) =>
+  new Promise<Planet>((res) => {
     const cacheKey = `planet_${id}`;
 
     return cache
@@ -124,7 +131,7 @@ export const getSwPlanet = (id) =>
           return await response.json();
         })
       )
-      .then((j) => {
-        res(j);
+      .then((data: Planet) => {
+        res(data);
       });
   });

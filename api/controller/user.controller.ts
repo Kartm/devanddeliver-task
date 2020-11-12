@@ -1,3 +1,4 @@
+import express from "express";
 import NodeCrypto from "crypto";
 import jwt from "jsonwebtoken";
 import randomInteger from "../utils/randomInteger";
@@ -12,10 +13,11 @@ import {
   getSwStarship,
   getSwPlanet,
 } from "../services/swapi.service";
+import { CustomRequest } from "../middleware/authenticateToken";
 
 const User = db.users;
 
-export async function register(req, res) {
+export async function register(req: CustomRequest, res: express.Response) {
   if (!req.body.email || !req.body.password) {
     res.status(400).send({
       message: "Email and password cannot be empty.",
@@ -51,7 +53,7 @@ export async function register(req, res) {
     });
 }
 
-export async function login(req, res) {
+export async function login(req: CustomRequest, res: express.Response) {
   User.findOne({
     where: {
       email: req.body.email,
@@ -91,7 +93,7 @@ export async function login(req, res) {
     });
 }
 
-export async function find(req, res) {
+export async function find(req: CustomRequest, res: express.Response) {
   User.findByPk(req.userId)
     .then((user) => {
       getSwHero(user.swHeroId).then((data: any) => {
@@ -110,7 +112,7 @@ export async function find(req, res) {
     });
 }
 
-export async function findFilms(req, res) {
+export async function findFilms(req: CustomRequest, res: express.Response) {
   User.findByPk(req.userId)
     .then((user) => {
       getSwHero(user.swHeroId).then((data: any) => {
@@ -130,7 +132,7 @@ export async function findFilms(req, res) {
     });
 }
 
-export async function findOneFilm(req, res) {
+export async function findOneFilm(req: CustomRequest, res: express.Response) {
   const id = req.params.id;
 
   User.findByPk(req.userId)
@@ -158,7 +160,7 @@ export async function findOneFilm(req, res) {
     });
 }
 
-export async function findSpecies(req, res) {
+export async function findSpecies(req: CustomRequest, res: express.Response) {
   User.findByPk(req.userId)
     .then((user) => {
       getSwHero(user.swHeroId).then((data: any) => {
@@ -178,7 +180,10 @@ export async function findSpecies(req, res) {
     });
 }
 
-export async function findOneSpecies(req, res) {
+export async function findOneSpecies(
+  req: CustomRequest,
+  res: express.Response
+) {
   const id = req.params.id;
 
   User.findByPk(req.userId)
@@ -206,7 +211,7 @@ export async function findOneSpecies(req, res) {
     });
 }
 
-export async function findVehicles(req, res) {
+export async function findVehicles(req: CustomRequest, res: express.Response) {
   User.findByPk(req.userId)
     .then((user) => {
       getSwHero(user.swHeroId).then((data: any) => {
@@ -227,7 +232,10 @@ export async function findVehicles(req, res) {
     });
 }
 
-export async function findOneVehicle(req, res) {
+export async function findOneVehicle(
+  req: CustomRequest,
+  res: express.Response
+) {
   const id = req.params.id;
 
   User.findByPk(req.userId)
@@ -255,7 +263,7 @@ export async function findOneVehicle(req, res) {
     });
 }
 
-export async function findStarships(req, res) {
+export async function findStarships(req: CustomRequest, res: express.Response) {
   User.findByPk(req.userId)
     .then((user) => {
       getSwHero(user.swHeroId).then((data: any) => {
@@ -278,7 +286,10 @@ export async function findStarships(req, res) {
     });
 }
 
-export async function findOneStarship(req, res) {
+export async function findOneStarship(
+  req: CustomRequest,
+  res: express.Response
+) {
   const id = req.params.id;
 
   User.findByPk(req.userId)
@@ -307,7 +318,7 @@ export async function findOneStarship(req, res) {
     });
 }
 
-export async function findPlanet(req, res) {
+export async function findPlanet(req: CustomRequest, res: express.Response) {
   User.findByPk(req.userId)
     .then((user) => {
       getSwHero(user.swHeroId).then((data: any) => {

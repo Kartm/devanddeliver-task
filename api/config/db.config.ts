@@ -4,7 +4,6 @@ export default {
   password: "123",
   database: "SW_DB",
   port: 3306,
-  dialect: "mysql",
   pool: {
     max: 5,
     min: 0,

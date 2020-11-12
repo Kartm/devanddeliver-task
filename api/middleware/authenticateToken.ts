@@ -1,6 +1,15 @@
+import express from "express";
 import jwt from "jsonwebtoken";
 
-export default function authenticateToken(req, res, next) {
+export interface CustomRequest extends express.Request {
+  userId: number;
+}
+
+export default function authenticateToken(
+  req: CustomRequest,
+  res: express.Response,
+  next
+) {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
   if (token == null) return res.sendStatus(401);
@@ -8,6 +17,7 @@ export default function authenticateToken(req, res, next) {
   jwt.verify(token, "SECRET", (err, decoded) => {
     console.log(err);
     if (err) return res.sendStatus(403);
+
     req.userId = decoded.userId;
 
     next();
