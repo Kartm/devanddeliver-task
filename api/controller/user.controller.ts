@@ -1,4 +1,4 @@
-import express, { Response } from "express";
+import { Response } from "express";
 import NodeCrypto from "crypto";
 import jwt from "jsonwebtoken";
 import randomInteger from "../utils/randomInteger";
