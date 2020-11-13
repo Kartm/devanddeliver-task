@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
-interface MetaData {
+export interface MetaData {
   userId: number;
 }
 
