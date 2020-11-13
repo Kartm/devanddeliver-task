@@ -1,8 +1,8 @@
 import * as Sequelize from "sequelize";
 import dbConfig from "../config/db.config";
-import { users } from "./user.model";
+import { UserFactory } from "./user.model";
 
-const sequelize = new Sequelize.Sequelize(
+export const sequelize = new Sequelize.Sequelize(
   dbConfig.database,
   dbConfig.user,
   dbConfig.password,
@@ -20,6 +20,5 @@ const sequelize = new Sequelize.Sequelize(
 
 export default {
   Sequelize,
-  sequelize,
-  users,
+  users: UserFactory(sequelize),
 };
