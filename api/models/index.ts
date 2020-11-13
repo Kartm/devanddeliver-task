@@ -20,5 +20,6 @@ export const sequelize = new Sequelize.Sequelize(
 
 export default {
   Sequelize,
+  sequelize,
   users: UserFactory(sequelize),
 };
