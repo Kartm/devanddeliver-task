@@ -9,6 +9,7 @@
   "author": "Łukasz Blachnicki",
   "license": "MIT",
   "dependencies": {
+    "@types/jsonwebtoken": "^8.5.0",
     "body-parser": "^1.15.2",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
