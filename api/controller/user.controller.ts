@@ -14,13 +14,28 @@ import {
   getSwPlanet,
 } from "../services/swapi.service";
 import { RequestWithMetaData } from "../middleware/authenticateToken";
-import { User } from "../models/user.model";
+import { User } from "../models/user/user.model";
+import {
+  RegisterUserDTO,
+  LoginUserDTO,
+  UserFindDTO,
+  FilmsDTO,
+  FilmSingleDTO,
+  SpeciesDTO,
+  SpeciesSingleDTO,
+  VehiclesDTO,
+  VehicleSingleDTO,
+  StarshipSingleDTO,
+  StarshipsDTO,
+  PlanetSingleDTO,
+} from "../models/user/user.dto";
+import { ErrorMessageDTO, ErrorMessageWithTokenDTO } from "../models/api.dto";
 
 export async function register(req: RequestWithMetaData, res: Response) {
   if (!req.body.email || !req.body.password) {
     res.status(400).send({
       message: "Email and password cannot be empty.",
-    });
+    } as ErrorMessageDTO);
     return;
   }
 
@@ -44,12 +59,12 @@ export async function register(req: RequestWithMetaData, res: Response) {
         id: user.id,
         email: user.email,
         swHeroId: user.swHeroId,
-      });
+      } as RegisterUserDTO);
     })
     .catch((err) => {
       res.status(500).send({
         message: err.message || "Some error occurred while creating the user.",
-      });
+      } as ErrorMessageDTO);
     });
 }
 
@@ -75,7 +90,7 @@ export async function login(req: RequestWithMetaData, res: Response) {
         return res.status(401).send({
           accessToken: null,
           message: "Invalid password!",
-        });
+        } as ErrorMessageWithTokenDTO);
       }
 
       var token = jwt.sign({ userId: user.id }, "SECRET", {
@@ -87,10 +102,10 @@ export async function login(req: RequestWithMetaData, res: Response) {
         email: user.email,
         swHeroId: user.swHeroId,
         accessToken: token,
-      });
+      } as LoginUserDTO);
     })
     .catch((err) => {
-      res.status(500).send({ message: err.message });
+      res.status(500).send({ message: err.message } as ErrorMessageDTO);
     });
 }
 
@@ -103,14 +118,14 @@ export async function find(req: RequestWithMetaData, res: Response) {
           id: user.id,
           email: user.email,
           hero: data,
-        });
+        } as UserFindDTO);
       });
     })
     .catch((err) => {
       res.status(500).send({
         message:
           err.message || "Some error occurred while retrieving user data.",
-      });
+      } as ErrorMessageDTO);
     });
 }
 
@@ -124,14 +139,14 @@ export async function findFilms(req: RequestWithMetaData, res: Response) {
         Promise.all(filmIds.map((id) => getSwFilm(id))).then((values) => {
           res.status(200).send({
             films: values,
-          });
+          } as FilmsDTO);
         });
       });
     })
     .catch((err) => {
       res.status(500).send({
         message: err.message || "Some error occurred while retrieving films.",
-      });
+      } as ErrorMessageDTO);
     });
 }
 
@@ -147,20 +162,20 @@ export async function findOneFilm(req: RequestWithMetaData, res: Response) {
         if (!filmIds.includes(id)) {
           return res.status(403).send({
             message: "No access to this film!",
-          });
+          } as ErrorMessageDTO);
         }
 
         getSwFilm(id).then((film) => {
           res.status(200).send({
             film,
-          });
+          } as FilmSingleDTO);
         });
       });
     })
     .catch((err) => {
       res.status(500).send({
         message: err.message || "Some error occurred while retrieving film.",
-      });
+      } as ErrorMessageDTO);
     });
 }
 
@@ -174,14 +189,14 @@ export async function findSpecies(req: RequestWithMetaData, res: Response) {
         Promise.all(speciesIds.map((id) => getSwSpecies(id))).then((values) => {
           res.status(200).send({
             species: values,
-          });
+          } as SpeciesDTO);
         });
       });
     })
     .catch((err) => {
       res.status(500).send({
         message: err.message || "Some error occurred while retrieving species.",
-      });
+      } as ErrorMessageDTO);
     });
 }
 
@@ -197,20 +212,20 @@ export async function findOneSpecies(req: RequestWithMetaData, res: Response) {
         if (!speciesIds.includes(id)) {
           return res.status(403).send({
             message: "No access to this species!",
-          });
+          } as ErrorMessageDTO);
         }
 
         getSwSpecies(id).then((species) => {
           res.status(200).send({
             species,
-          });
+          } as SpeciesSingleDTO);
         });
       });
     })
     .catch((err) => {
       res.status(500).send({
         message: err.message || "Some error occurred while retrieving species.",
-      });
+      } as ErrorMessageDTO);
     });
 }
 
@@ -224,7 +239,7 @@ export async function findVehicles(req: RequestWithMetaData, res: Response) {
         Promise.all(vehicleIds.map((id) => getSwVehicle(id))).then((values) => {
           res.status(200).send({
             vehicles: values,
-          });
+          } as VehiclesDTO);
         });
       });
     })
@@ -232,7 +247,7 @@ export async function findVehicles(req: RequestWithMetaData, res: Response) {
       res.status(500).send({
         message:
           err.message || "Some error occurred while retrieving vehicles.",
-      });
+      } as ErrorMessageDTO);
     });
 }
 
@@ -248,20 +263,20 @@ export async function findOneVehicle(req: RequestWithMetaData, res: Response) {
         if (!vehicleIds.includes(id)) {
           return res.status(403).send({
             message: "No access to this vehicle!",
-          });
+          } as ErrorMessageDTO);
         }
 
         getSwVehicle(id).then((vehicle) => {
           res.status(200).send({
             vehicle,
-          });
+          } as VehicleSingleDTO);
         });
       });
     })
     .catch((err) => {
       res.status(500).send({
         message: err.message || "Some error occurred while retrieving vehicle.",
-      });
+      } as ErrorMessageDTO);
     });
 }
 
@@ -276,7 +291,7 @@ export async function findStarships(req: RequestWithMetaData, res: Response) {
           (values) => {
             res.status(200).send({
               starships: values,
-            });
+            } as StarshipsDTO);
           }
         );
       });
@@ -285,7 +300,7 @@ export async function findStarships(req: RequestWithMetaData, res: Response) {
       res.status(500).send({
         message:
           err.message || "Some error occurred while retrieving starships.",
-      });
+      } as ErrorMessageDTO);
     });
 }
 
@@ -301,13 +316,13 @@ export async function findOneStarship(req: RequestWithMetaData, res: Response) {
         if (!starshipIds.includes(id)) {
           return res.status(403).send({
             message: "No access to this starship!",
-          });
+          } as ErrorMessageDTO);
         }
 
         getSwStarship(id).then((starship) => {
           res.status(200).send({
             starship,
-          });
+          } as StarshipSingleDTO);
         });
       });
     })
@@ -315,7 +330,7 @@ export async function findOneStarship(req: RequestWithMetaData, res: Response) {
       res.status(500).send({
         message:
           err.message || "Some error occurred while retrieving starship.",
-      });
+      } as ErrorMessageDTO);
     });
 }
 
@@ -329,13 +344,13 @@ export async function findPlanet(req: RequestWithMetaData, res: Response) {
         getSwPlanet(planetId).then((planet) => {
           res.status(200).send({
             planet,
-          });
+          } as PlanetSingleDTO);
         });
       });
     })
     .catch((err) => {
       res.status(500).send({
         message: err.message || "Some error occurred while retrieving planet.",
-      });
+      } as ErrorMessageDTO);
     });
 }

@@ -1,6 +1,6 @@
 import * as Sequelize from "sequelize";
 import dbConfig from "../config/db.config";
-import { UserFactory } from "./user.model";
+import { UserFactory } from "./user/user.model";
 
 export const sequelize = new Sequelize.Sequelize(
   dbConfig.database,
