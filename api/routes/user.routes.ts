@@ -1,8 +1,8 @@
 import authenticateToken from "../middleware/authenticateToken";
 import * as users from "../controller/user.controller";
-import express from "express";
+import express, { Express } from "express";
 
-export default (app) => {
+export default (app: Express) => {
   var router = express.Router();
 
   router.post("/register", users.register);
