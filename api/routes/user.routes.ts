@@ -3,7 +3,7 @@ import * as users from "../controller/user.controller";
 import express, { Express } from "express";
 
 export default (app: Express) => {
-  var router = express.Router();
+  const router = express.Router();
 
   router.post("/register", users.register);
 

@@ -84,7 +84,7 @@ export async function login(req: RequestWithMetaData, res: Response) {
         .update(req.body.password)
         .digest("hex");
 
-      var passwordIsValid = user.passwordHash === passwordHash;
+      const passwordIsValid = user.passwordHash === passwordHash;
 
       if (!passwordIsValid) {
         return res.status(401).send({
@@ -93,7 +93,7 @@ export async function login(req: RequestWithMetaData, res: Response) {
         } as ErrorMessageWithTokenDTO);
       }
 
-      var token = jwt.sign({ userId: user.id }, "SECRET", {
+      const token = jwt.sign({ userId: user.id }, "SECRET", {
         expiresIn: 86400, // 24 hours
       });
 

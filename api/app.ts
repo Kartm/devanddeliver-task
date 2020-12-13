@@ -7,7 +7,7 @@ const app = express();
 import db from "./models";
 import routes from "./routes/user.routes";
 
-var corsOptions = {
+const corsOptions = {
   origin: "http://localhost:8081",
 };
 
