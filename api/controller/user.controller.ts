@@ -43,7 +43,7 @@ export async function register(req: RequestWithMetaData, res: Response) {
     .update(req.body.password)
     .digest("hex");
 
-  const allSwPeople: any = await getAllSwPeople();
+  const allSwPeople = await getAllSwPeople();
   const swHeroId = randomInteger(1, allSwPeople.count);
 
   const newUser = {
