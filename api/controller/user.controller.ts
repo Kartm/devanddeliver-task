@@ -55,7 +55,7 @@ export async function register(req: RequestWithMetaData, res: Response) {
   await db.users
     .create(newUser)
     .then((user: User) => {
-      res.send({
+      res.status(201).send({
         id: user.id,
         email: user.email,
         swHeroId: user.swHeroId,
