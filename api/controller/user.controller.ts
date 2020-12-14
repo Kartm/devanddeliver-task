@@ -52,7 +52,7 @@ export async function register(req: RequestWithMetaData, res: Response) {
     swHeroId,
   };
 
-  db.users
+  await db.users
     .create(newUser)
     .then((user: User) => {
       res.send({
@@ -69,7 +69,7 @@ export async function register(req: RequestWithMetaData, res: Response) {
 }
 
 export async function login(req: RequestWithMetaData, res: Response) {
-  db.users
+  await db.users
     .findOne({
       where: {
         email: req.body.email,
@@ -110,7 +110,7 @@ export async function login(req: RequestWithMetaData, res: Response) {
 }
 
 export async function find(req: RequestWithMetaData, res: Response) {
-  db.users
+  await db.users
     .findByPk(req.userId)
     .then((user: User) => {
       getSwHero(user.swHeroId).then((data) => {
@@ -130,7 +130,7 @@ export async function find(req: RequestWithMetaData, res: Response) {
 }
 
 export async function findFilms(req: RequestWithMetaData, res: Response) {
-  db.users
+  await db.users
     .findByPk(req.userId)
     .then((user: User) => {
       getSwHero(user.swHeroId).then((data) => {
@@ -153,7 +153,7 @@ export async function findFilms(req: RequestWithMetaData, res: Response) {
 export async function findOneFilm(req: RequestWithMetaData, res: Response) {
   const id = parseInt(req.params.id);
 
-  db.users
+  await db.users
     .findByPk(req.userId)
     .then((user: User) => {
       getSwHero(user.swHeroId).then((data) => {
@@ -180,7 +180,7 @@ export async function findOneFilm(req: RequestWithMetaData, res: Response) {
 }
 
 export async function findSpecies(req: RequestWithMetaData, res: Response) {
-  db.users
+  await db.users
     .findByPk(req.userId)
     .then((user: User) => {
       getSwHero(user.swHeroId).then((data) => {
@@ -203,7 +203,7 @@ export async function findSpecies(req: RequestWithMetaData, res: Response) {
 export async function findOneSpecies(req: RequestWithMetaData, res: Response) {
   const id = parseInt(req.params.id);
 
-  db.users
+  await db.users
     .findByPk(req.userId)
     .then((user: User) => {
       getSwHero(user.swHeroId).then((data) => {
@@ -230,7 +230,7 @@ export async function findOneSpecies(req: RequestWithMetaData, res: Response) {
 }
 
 export async function findVehicles(req: RequestWithMetaData, res: Response) {
-  db.users
+  await db.users
     .findByPk(req.userId)
     .then((user: User) => {
       getSwHero(user.swHeroId).then((data) => {
@@ -254,7 +254,7 @@ export async function findVehicles(req: RequestWithMetaData, res: Response) {
 export async function findOneVehicle(req: RequestWithMetaData, res: Response) {
   const id = parseInt(req.params.id);
 
-  db.users
+  await db.users
     .findByPk(req.userId)
     .then((user: User) => {
       getSwHero(user.swHeroId).then((data) => {
@@ -281,7 +281,7 @@ export async function findOneVehicle(req: RequestWithMetaData, res: Response) {
 }
 
 export async function findStarships(req: RequestWithMetaData, res: Response) {
-  db.users
+  await db.users
     .findByPk(req.userId)
     .then((user: User) => {
       getSwHero(user.swHeroId).then((data) => {
@@ -307,7 +307,7 @@ export async function findStarships(req: RequestWithMetaData, res: Response) {
 export async function findOneStarship(req: RequestWithMetaData, res: Response) {
   const id = parseInt(req.params.id);
 
-  db.users
+  await db.users
     .findByPk(req.userId)
     .then((user: User) => {
       getSwHero(user.swHeroId).then((data) => {
@@ -335,7 +335,7 @@ export async function findOneStarship(req: RequestWithMetaData, res: Response) {
 }
 
 export async function findPlanet(req: RequestWithMetaData, res: Response) {
-  db.users
+  await db.users
     .findByPk(req.userId)
     .then((user: User) => {
       getSwHero(user.swHeroId).then((data) => {
