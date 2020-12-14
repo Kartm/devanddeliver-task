@@ -39,6 +39,22 @@ export async function register(req: RequestWithMetaData, res: Response) {
     return;
   }
 
+  await db.users
+    .findOne({
+      where: {
+        email: req.body.email,
+      },
+    })
+    .then(async (user: User) => {
+      if (user) {
+        res.status(400).send({ message: "Email already in use." });
+        return;
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message } as ErrorMessageDTO);
+    });
+
   const passwordHash = NodeCrypto.createHash("sha256")
     .update(req.body.password)
     .digest("hex");
