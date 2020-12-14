@@ -1,6 +1,8 @@
-FROM node:10-slim
+FROM node:12
 
 WORKDIR /app
+
+ARG BUILD_VERSION=1.1.0
 
 RUN npm install -g nodemon
 RUN npm install -g ts-node
