@@ -1,6 +1,7 @@
+import express, { Express } from "express";
 import authenticateToken from "../middleware/authenticateToken";
 import * as users from "../controller/user.controller";
-import express, { Express } from "express";
+import * as starwars from "../controller/starwars.controller";
 
 export default (app: Express) => {
   const router = express.Router();
@@ -11,23 +12,23 @@ export default (app: Express) => {
 
   router.get("/", authenticateToken, users.find);
 
-  router.get("/films", authenticateToken, users.findFilms);
+  router.get("/films", authenticateToken, starwars.findFilms);
 
-  router.get("/films/:id", authenticateToken, users.findOneFilm);
+  router.get("/films/:id", authenticateToken, starwars.findOneFilm);
 
-  router.get("/species", authenticateToken, users.findSpecies);
+  router.get("/species", authenticateToken, starwars.findSpecies);
 
-  router.get("/species/:id", authenticateToken, users.findOneSpecies);
+  router.get("/species/:id", authenticateToken, starwars.findOneSpecies);
 
-  router.get("/vehicles", authenticateToken, users.findVehicles);
+  router.get("/vehicles", authenticateToken, starwars.findVehicles);
 
-  router.get("/vehicles/:id", authenticateToken, users.findOneVehicle);
+  router.get("/vehicles/:id", authenticateToken, starwars.findOneVehicle);
 
-  router.get("/starships", authenticateToken, users.findStarships);
+  router.get("/starships", authenticateToken, starwars.findStarships);
 
-  router.get("/starships/:id", authenticateToken, users.findOneStarship);
+  router.get("/starships/:id", authenticateToken, starwars.findOneStarship);
 
-  router.get("/planet", authenticateToken, users.findPlanet);
+  router.get("/planet", authenticateToken, starwars.findPlanet);
 
   app.use("/api/user", router);
 };
